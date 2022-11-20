@@ -15,31 +15,67 @@ class AllocateAddresses extends Visitor {
 		this.currentClass = currentClass;
 	}
 
-        // BLOCK
-        public Object visitBlock(Block bl) {
-    	    // YOUR CODE HERE
-	    return null;   
-        }
+    // BLOCK (COMPLETE)
+    public Object visitBlock(Block bl) {
+    	// YOUR CODE HERE
+        int tempAddress = gen.getAddress();
+        bl.visitChldren(this);
+        gen.setAddress(tempAddress);
+        // - END -
+        return null;   
+    }
     
 
-	// LOCAL VARIABLE DECLARATION
+	// LOCAL VARIABLE DECLARATION (COMPLETE)
 	public Object visitLocalDecl(LocalDecl ld) {
 		// YOUR CODE HERE
+		ld.address = gen.getAddress();
+		
+		if (ld.type()isDoubleType() || ld.type()isLongType()) {
+			gen.inc2Address();
+		}
+		else {
+			gen.incAddress();
+		}
+		// - END -
+		
 		println(ld.line + ": LocalDecl:\tAssigning address:  " + ld.address + " to local variable '" + ld.var().name().getname() + "'.");
 		return null;
 	}
 
-	// PARAMETER DECLARATION
+	// PARAMETER DECLARATION (COMPLETE)
 	public Object visitParamDecl(ParamDecl pd) {
 		// YOUR CODE HERE
+		pd.address = gen.getAddress();
+		
+		if (pd.type()isDoubleType() || pd.type()isLongType()) {
+			gen.inc2Address();
+		}
+		else {
+			gen.incAddress();
+		}
+		// - END -
+		
 		println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
 		return null;
 	}
 
-	// METHOD DECLARATION
+	// METHOD DECLARATION (COMPLETE)
 	public Object visitMethodDecl(MethodDecl md) {
 		println(md.line + ": MethodDecl:\tResetting address counter for method '" + md.name().getname() + "'.");
 		// YOUR CODE HERE
+		gen.resetAddress();
+		if (md.getModifiers().isStatic()) {
+			gen.setAddress(0);
+		}
+		else {
+			gen.setAddress(1);
+		}
+		currentBodyDecl = md;
+		super.visitMethodDecl(md);
+		md.localsUsed = gen.getLocalsUsed();
+		// - END -
+		
 		println(md.line + ": End MethodDecl");	
 		return null;
 	}
@@ -57,10 +93,17 @@ class AllocateAddresses extends Visitor {
 		return null;
 	}
 
-	// STATIC INITIALIZER
+	// STATIC INITIALIZER (COMPLETE)
 	public Object visitStaticInitDecl(StaticInitDecl si) {
 		println(si.line + ": StaticInit:\tResetting address counter for static initializer for class '" + currentClass.name() + "'.");
 		// YOUR CODE HERE
+		gen.resetAddress();
+		gen.setAddress(0);
+		currentBodyDecl = si;
+		super.visitStaticInitDecl(si);
+		si.localsUsed = gen.getLocalsUsed();
+		// - END -
+		
 		println(si.line + ": End StaticInit");
 		return null;
 	}

@@ -13,6 +13,7 @@ import Jasmin.RuntimeConstants;
  * Xreturn
  * arraylength
  * aconst_null
+ * dup
  * 
  */
 public class Instruction {
