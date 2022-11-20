@@ -1,0 +1,157 @@
+.class public Bin
+.super java/lang/Object
+
+.method public b(II)I
+	.limit stack 50
+	.limit locals 3
+;  (9) Method Declaration (b)
+;  (10) If Statement
+;  (10) Binary Expression
+;  (10) Binary Expression
+;  (10) Name Expression --
+	iload_2
+;  (10) End NameExpr
+;  (10) Literal
+	iconst_0
+;  (10) End Literal
+	if_icmplt L2
+	iconst_0
+	goto L3
+L2:
+	iconst_1
+L3:
+;  (10) End BinaryExpr
+	dup
+	ifne L4
+	pop
+;  (10) Binary Expression
+;  (10) Name Expression --
+	iload_1
+;  (10) End NameExpr
+;  (10) Name Expression --
+	iload_2
+;  (10) End NameExpr
+	if_icmplt L5
+	iconst_0
+	goto L6
+L5:
+	iconst_1
+L6:
+;  (10) End BinaryExpr
+L4:
+;  (10) End BinaryExpr
+	ifeq L1
+;  (11) Return Statement
+;  (11) Unary Pre Expression
+;  (11) Literal
+	iconst_1
+;  (11) End Literal
+	ineg
+;  (11) End UnaryPreExpr
+	ireturn
+;  (11) End ReturnStat
+L1:
+;  (10) End IfStat
+;  (12) If Statement
+;  (12) Binary Expression
+;  (12) Binary Expression
+;  (12) Name Expression --
+	iload_2
+;  (12) End NameExpr
+;  (12) Literal
+	iconst_0
+;  (12) End Literal
+	if_icmpeq L8
+	iconst_0
+	goto L9
+L8:
+	iconst_1
+L9:
+;  (12) End BinaryExpr
+	dup
+	ifne L10
+	pop
+;  (12) Binary Expression
+;  (12) Name Expression --
+	iload_1
+;  (12) End NameExpr
+;  (12) Name Expression --
+	iload_2
+;  (12) End NameExpr
+	if_icmpeq L11
+	iconst_0
+	goto L12
+L11:
+	iconst_1
+L12:
+;  (12) End BinaryExpr
+L10:
+;  (12) End BinaryExpr
+	ifeq L7
+;  (13) Return Statement
+;  (13) Literal
+	iconst_1
+;  (13) End Literal
+	ireturn
+;  (13) End ReturnStat
+L7:
+;  (12) End IfStat
+;  (14) Return Statement
+;  (14) Binary Expression
+;  (14) Invocation
+	aload_0
+;  (14) Binary Expression
+;  (14) Name Expression --
+	iload_1
+;  (14) End NameExpr
+;  (14) Literal
+	iconst_1
+;  (14) End Literal
+	isub
+;  (14) End BinaryExpr
+;  (14) Name Expression --
+	iload_2
+;  (14) End NameExpr
+	invokevirtual Bin/b(II)I
+;  (14) End Invocation
+;  (14) Invocation
+	aload_0
+;  (14) Binary Expression
+;  (14) Name Expression --
+	iload_1
+;  (14) End NameExpr
+;  (14) Literal
+	iconst_1
+;  (14) End Literal
+	isub
+;  (14) End BinaryExpr
+;  (14) Binary Expression
+;  (14) Name Expression --
+	iload_2
+;  (14) End NameExpr
+;  (14) Literal
+	iconst_1
+;  (14) End Literal
+	isub
+;  (14) End BinaryExpr
+	invokevirtual Bin/b(II)I
+;  (14) End Invocation
+	iadd
+;  (14) End BinaryExpr
+	ireturn
+;  (14) End ReturnStat
+.end method
+
+.method public <init>()V
+	.limit stack 50
+	.limit locals 1
+;  (0) Constructor Declaration
+;  (0) Explicit Constructor Invocation
+	aload_0
+	invokespecial java/lang/Object/<init>()V
+;  (0) End CInvocation
+;  (0) Field Init Generation Start
+;  (0) Field Init Generation End
+	return
+.end method
+

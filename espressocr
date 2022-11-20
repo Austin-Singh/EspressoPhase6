@@ -1,0 +1,2 @@
+#!/bin/sh
+java -classpath src/Utilities/Espresso.jar Espressoc -ref rj -I Include/ -P:6 -Tcode $@

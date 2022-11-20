@@ -1,0 +1,3 @@
+class Lock {
+    public static void foo(LockTest lt, int v) { }
+}
