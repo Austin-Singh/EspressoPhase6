@@ -39,7 +39,7 @@ class GenerateCode extends Visitor {
 
 	// ARRAY VISITORS START HERE
 
-	/** ArrayAccessExpr */
+	/** ArrayAccessExpr (YET TO COMPLETE)*/
 	public Object visitArrayAccessExpr(ArrayAccessExpr ae) {
 		println(ae.line + ": Visiting ArrayAccessExpr");
 		classFile.addComment(ae, "ArrayAccessExpr");
@@ -48,14 +48,14 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	/** ArrayLiteral */
+	/** ArrayLiteral (YET TO COMPLETE)*/
 	public Object visitArrayLiteral(ArrayLiteral al) {
 		println(al.line + ": Visiting an ArrayLiteral ");
 		// YOUR CODE HERE
 		return null;
 	}
 
-	/** NewArray */
+	/** NewArray (YET TO COMPLETE)*/
 	public Object visitNewArray(NewArray ne) {
 		println(ne.line + ": NewArray:\t Creating new array of type " + ne.type.typeName());
 		// YOUR CODE HERE
@@ -64,7 +64,7 @@ class GenerateCode extends Visitor {
 
 	// END OF ARRAY VISITORS
 
-	// ASSIGNMENT
+	// ASSIGNMENT (COMPLETE)
 	public Object visitAssignment(Assignment as) {
 		println(as.line + ": Assignment:\tGenerating code for an Assignment.");
 		classFile.addComment(as, "Assignment");
@@ -201,7 +201,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// BINARY EXPRESSION
+	// BINARY EXPRESSION (YET TO COMPLETE)
     public Object visitBinaryExpr(BinaryExpr be) {
 	println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
 	classFile.addComment(be, "Binary Expression");
@@ -211,7 +211,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // BREAK STATEMENT
+    // BREAK STATEMENT (YET TO COMPLETE)
     public Object visitBreakStat(BreakStat br) {
 	println(br.line + ": BreakStat:\tGenerating code.");
 	classFile.addComment(br, "Break Statement");
@@ -222,7 +222,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // CAST EXPRESSION
+    // CAST EXPRESSION (YET TO COMPLETE)
     public Object visitCastExpr(CastExpr ce) {
 	println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
 	classFile.addComment(ce, "Cast Expression");
@@ -232,7 +232,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
     
-	// CONSTRUCTOR INVOCATION (EXPLICIT)
+	// CONSTRUCTOR INVOCATION (EXPLICIT) (YET TO COMPLETE)
 	public Object visitCInvocation(CInvocation ci) {
 		println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
 		classFile.addComment(ci, "Explicit Constructor Invocation");
@@ -242,7 +242,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// CLASS DECLARATION
+	// CLASS DECLARATION (YET TO COMPLETE)
 	public Object visitClassDecl(ClassDecl cd) {
 		println(cd.line + ": ClassDecl:\tGenerating code for class '" + cd.name() + "'.");
 
@@ -255,7 +255,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// CONSTRUCTOR DECLARATION
+	// CONSTRUCTOR DECLARATION (YET TO COMPLETE)
 	public Object visitConstructorDecl(ConstructorDecl cd) {
 		println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
 
@@ -277,7 +277,7 @@ class GenerateCode extends Visitor {
 	}
 
 
-	// CONTINUE STATEMENT
+	// CONTINUE STATEMENT (YET TO COMPLETE)
 	public Object visitContinueStat(ContinueStat cs) {
 		println(cs.line + ": ContinueStat:\tGenerating code.");
 		classFile.addComment(cs, "Continue Statement");
@@ -288,7 +288,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// DO STATEMENT
+	// DO STATEMENT (YET TO COMPLETE)
 	public Object visitDoStat(DoStat ds) {
 		println(ds.line + ": DoStat:\tGenerating code.");
 		classFile.addComment(ds, "Do Statement");
@@ -300,7 +300,7 @@ class GenerateCode extends Visitor {
 	}
 
 
-	// EXPRESSION STATEMENT
+	// EXPRESSION STATEMENT (COMPLETE)
 	public Object visitExprStat(ExprStat es) {	
 		println(es.line + ": ExprStat:\tVisiting an Expression Statement.");
 		classFile.addComment(es, "Expression Statement");
@@ -331,7 +331,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// FIELD DECLARATION
+	// FIELD DECLARATION (COMPLETE)
 	public Object visitFieldDecl(FieldDecl fd) {
 		println(fd.line + ": FieldDecl:\tGenerating code.");
 
@@ -340,7 +340,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// FIELD REFERENCE
+	// FIELD REFERENCE (COMPLETE)
 	public Object visitFieldRef(FieldRef fr) {
 		println(fr.line + ": FieldRef:\tGenerating code (getfield code only!).");
 
@@ -376,7 +376,7 @@ class GenerateCode extends Visitor {
 	}
 
 
-	// FOR STATEMENT
+	// FOR STATEMENT (YET TO COMPLETE)
 	public Object visitForStat(ForStat fs) {
 		println(fs.line + ": ForStat:\tGenerating code.");
 		classFile.addComment(fs, "For Statement");
@@ -385,7 +385,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// IF STATEMENT
+	// IF STATEMENT (YET TO COMPLETE)
 	public Object visitIfStat(IfStat is) {
 		println(is.line + ": IfStat:\tGenerating code.");
 		classFile.addComment(is, "If Statement");
@@ -396,7 +396,7 @@ class GenerateCode extends Visitor {
 	}
 
 
-	// INVOCATION
+	// INVOCATION (YET TO COMPLETE)
 	public Object visitInvocation(Invocation in) {
 	    println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
 		classFile.addComment(in, "Invocation");
@@ -408,7 +408,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// LITERAL
+	// LITERAL (COMPLETE)
 	public Object visitLiteral(Literal li) {
 		println(li.line + ": Literal:\tGenerating code for Literal '" + li.getText() + "'.");
 		classFile.addComment(li, "Literal");
@@ -446,7 +446,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// LOCAL VARIABLE DECLARATION
+	// LOCAL VARIABLE DECLARATION (YET TO COMPLETE)
 	public Object visitLocalDecl(LocalDecl ld) {
 		if (ld.var().init() != null) {
 			println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
@@ -462,7 +462,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// METHOD DECLARATION
+	// METHOD DECLARATION (COMPLETE)
 	public Object visitMethodDecl(MethodDecl md) {
 		println(md.line + ": MethodDecl:\tGenerating code for method '" + md.name().getname() + "'.");	
 		classFile.startMethod(md);
@@ -476,7 +476,7 @@ class GenerateCode extends Visitor {
 	}
 
 
-	// NAME EXPRESSION
+	// NAME EXPRESSION (YET TO COMPLETE)
 	public Object visitNameExpr(NameExpr ne) {
 		classFile.addComment(ne, "Name Expression --");
 
@@ -493,7 +493,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// NEW
+	// NEW (YET TO COMPLETE)
 	public Object visitNew(New ne) {
 		println(ne.line + ": New:\tGenerating code");
 		classFile.addComment(ne, "New");
@@ -504,7 +504,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// RETURN STATEMENT
+	// RETURN STATEMENT (YET TO COMPLETE)
 	public Object visitReturnStat(ReturnStat rs) {
 		println(rs.line + ": ReturnStat:\tGenerating code.");
 		classFile.addComment(rs, "Return Statement");
@@ -515,7 +515,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// STATIC INITIALIZER
+	// STATIC INITIALIZER (YET TO COMPLETE)
 	public Object visitStaticInitDecl(StaticInitDecl si) {
 		println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
 
@@ -529,18 +529,19 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// SUPER
+	// SUPER (YET TO COMPLETE)
 	public Object visitSuper(Super su) {
 		println(su.line + ": Super:\tGenerating code (access).");	
 		classFile.addComment(su, "Super");
 
 		// YOUR CODE HERE
+		// Should be the same as visitThis except it loads address 0
 
 		classFile.addComment(su, "End Super");
 		return null;
 	}
 
-	// SWITCH STATEMENT
+	// SWITCH STATEMENT (COMPLETE)
 	public Object visitSwitchStat(SwitchStat ss) {
 		println(ss.line + ": Switch Statement:\tGenerating code for Switch Statement.");
 		int def = -1;
@@ -605,7 +606,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// TERNARY EXPRESSION 
+	// TERNARY EXPRESSION (YET TO COMPLETE)
 	public Object visitTernary(Ternary te) {
 		println(te.line + ": Ternary:\tGenerating code.");
 		classFile.addComment(te, "Ternary Statement");
@@ -619,7 +620,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// THIS
+	// THIS (YET TO COMPLETE)
 	public Object visitThis(This th) {
 		println(th.line + ": This:\tGenerating code (access).");       
 		classFile.addComment(th, "This");
@@ -630,7 +631,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// UNARY POST EXPRESSION
+	// UNARY POST EXPRESSION (YET TO COMPLETE)
 	public Object visitUnaryPostExpr(UnaryPostExpr up) {
 		println(up.line + ": UnaryPostExpr:\tGenerating code.");
 		classFile.addComment(up, "Unary Post Expression");
@@ -641,7 +642,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// UNARY PRE EXPRESSION
+	// UNARY PRE EXPRESSION (YET TO COMPLETE)
 	public Object visitUnaryPreExpr(UnaryPreExpr up) {
 		println(up.line + ": UnaryPreExpr:\tGenerating code for " + up.op().operator() + " : " + up.expr().type.typeName() + " -> " + up.expr().type.typeName() + ".");
 		classFile.addComment(up,"Unary Pre Expression");
@@ -652,7 +653,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// WHILE STATEMENT
+	// WHILE STATEMENT (YET TO COMPLETE)
 	public Object visitWhileStat(WhileStat ws) {
 		println(ws.line + ": While Stat:\tGenerating Code.");
 
