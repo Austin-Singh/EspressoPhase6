@@ -173,66 +173,6 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// CONTINUE STATEMENT (COMPLETED)
-	public Object visitContinueStat(ContinueStat cs) {
-		println(cs.line + ": ContinueStat:\tGenerating code.");
-		classFile.addComment(cs, "Continue Statement");
-
-		// YOUR CODE HERE
-		if (!insideLoop) {
-			Error.error(cs, "Continue statement must be inside a loop.");
-		}
-		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L"+gen.getContinueLabel()));
-		// - END -
-
-		classFile.addComment(cs, "End ContinueStat");
-		return null;
-	}
-
-	// DO STATEMENT (COMPLETED)
-	public Object visitDoStat(DoStat ds) {
-		println(ds.line + ": DoStat:\tGenerating code.");
-		classFile.addComment(ds, "Do Statement");
-
-		// YOUR CODE HERE
-		String topLabel = "L"+gen.getLabel();
-		String endLabel = "L"+gen.getLabel();
-		String contLabel = "L"+gen.getLabel();
-		
-		String metaBreakLabel = gen.getBreakLabel();
-		String metaContinueLabel = gen.getContinueLabel();
-		
-		gen.setBreakLabel(endLabel);
-		gen.setContinueLabel(contLabel);
-		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-		
-		boolean metaInsideLoop = insideLoop;
-		insideLoop = true;
-		if (ds.stat() != null) {
-			ds.stat().visit(this);
-		}
-		insideLoop = metaInsideLoop;
-		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, contLabel));
-		
-		if (ds.expr() != null) {
-			ds.expr().visit(this);
-			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
-		}
-		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
-		
-		gen.setBreakLabel(metaBreakLabel);
-		gen.setContinueLabel(metaContinueLabel);
-		// - END -
-
-		classFile.addComment(ds, "End DoStat");
-		return null; 
-	}
-
 	// EXPRESSION STATEMENT (PROVIDED)
 	public Object visitExprStat(ExprStat es) {	
 		println(es.line + ": ExprStat:\tVisiting an Expression Statement.");
@@ -422,6 +362,66 @@ class GenerateCode extends Visitor {
 		Generator.setBreakLabel(oldBreakLabel);
 		classFile.addComment(ss, "End SwitchStat");
 		return null;
+	}
+
+	// CONTINUE STATEMENT (COMPLETED)
+	public Object visitContinueStat(ContinueStat cs) {
+		println(cs.line + ": ContinueStat:\tGenerating code.");
+		classFile.addComment(cs, "Continue Statement");
+
+		// YOUR CODE HERE
+		if (!insideLoop) {
+			Error.error(cs, "Continue statement must be inside a loop.");
+		}
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L"+gen.getContinueLabel()));
+		// - END -
+
+		classFile.addComment(cs, "End ContinueStat");
+		return null;
+	}
+
+	// DO STATEMENT (COMPLETED)
+	public Object visitDoStat(DoStat ds) {
+		println(ds.line + ": DoStat:\tGenerating code.");
+		classFile.addComment(ds, "Do Statement");
+
+		// YOUR CODE HERE
+		String topLabel = "L"+gen.getLabel();
+		String endLabel = "L"+gen.getLabel();
+		String contLabel = "L"+gen.getLabel();
+		
+		String metaBreakLabel = gen.getBreakLabel();
+		String metaContinueLabel = gen.getContinueLabel();
+		
+		gen.setBreakLabel(endLabel);
+		gen.setContinueLabel(contLabel);
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		
+		boolean metaInsideLoop = insideLoop;
+		insideLoop = true;
+		if (ds.stat() != null) {
+			ds.stat().visit(this);
+		}
+		insideLoop = metaInsideLoop;
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, contLabel));
+		
+		if (ds.expr() != null) {
+			ds.expr().visit(this);
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+		}
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		
+		gen.setBreakLabel(metaBreakLabel);
+		gen.setContinueLabel(metaContinueLabel);
+		// - END -
+
+		classFile.addComment(ds, "End DoStat");
+		return null; 
 	}
 
 	// FOR STATEMENT (COMPLETED)
