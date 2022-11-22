@@ -24,8 +24,7 @@ class GenerateCode extends Visitor {
     // use this for that. Should be set to true before parameters are
     // visited in Inovcation, CInvocation, and New
     private boolean isParameter = false; 
-        private boolean StringBuilderCreated = false;
-	
+    private boolean StringBuilderCreated = false;
 	
 	public GenerateCode(Generator g, boolean debug) {
 		gen = g;
@@ -37,37 +36,7 @@ class GenerateCode extends Visitor {
 		this.currentClass = cd;
 	}
 
-	// ARRAY VISITORS START HERE
-
-	/** ArrayAccessExpr (YET TO COMPLETE)*/
-	public Object visitArrayAccessExpr(ArrayAccessExpr ae) {
-		println(ae.line + ": Visiting ArrayAccessExpr");
-		classFile.addComment(ae, "ArrayAccessExpr");
-		// YOUR CODE HERE
-		
-		classFile.addComment(ae,"End ArrayAccessExpr");
-		return null;
-	}
-
-	/** ArrayLiteral (YET TO COMPLETE)*/
-	public Object visitArrayLiteral(ArrayLiteral al) {
-		println(al.line + ": Visiting an ArrayLiteral ");
-		// YOUR CODE HERE
-		
-		return null;
-	}
-
-	/** NewArray (YET TO COMPLETE)*/
-	public Object visitNewArray(NewArray ne) {
-		println(ne.line + ": NewArray:\t Creating new array of type " + ne.type.typeName());
-		// YOUR CODE HERE
-		
-		return null;
-	}
-
-	// END OF ARRAY VISITORS
-
-	// ASSIGNMENT (COMPLETE)
+	// ASSIGNMENT (PROVIDED)
 	public Object visitAssignment(Assignment as) {
 		println(as.line + ": Assignment:\tGenerating code for an Assignment.");
 		classFile.addComment(as, "Assignment");
@@ -204,86 +173,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// BINARY EXPRESSION (YET TO COMPLETE)
-    public Object visitBinaryExpr(BinaryExpr be) {
-	println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
-	classFile.addComment(be, "Binary Expression");
-		
-	// YOUR CODE HERE
-	
-	classFile.addComment(be, "End BinaryExpr");
-	return null;
-    }
-
-    // BREAK STATEMENT (YET TO COMPLETE)
-    public Object visitBreakStat(BreakStat br) {
-	println(br.line + ": BreakStat:\tGenerating code.");
-	classFile.addComment(br, "Break Statement");
-
-	// YOUR CODE HERE
-
-	classFile.addComment(br, "End BreakStat");
-	return null;
-    }
-
-    // CAST EXPRESSION (YET TO COMPLETE)
-    public Object visitCastExpr(CastExpr ce) {
-	println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
-	classFile.addComment(ce, "Cast Expression");
-	String instString;
-	// YOUR CODE HERE
-	
-	classFile.addComment(ce, "End CastExpr");
-	return null;
-    }
-    
-	// CONSTRUCTOR INVOCATION (EXPLICIT) (YET TO COMPLETE)
-	public Object visitCInvocation(CInvocation ci) {
-		println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
-		classFile.addComment(ci, "Explicit Constructor Invocation");
-
-		// YOUR CODE HERE
-		
-		classFile.addComment(ci, "End CInvocation");
-		return null;
-	}
-
-	// CLASS DECLARATION (YET TO COMPLETE)
-	public Object visitClassDecl(ClassDecl cd) {
-		println(cd.line + ": ClassDecl:\tGenerating code for class '" + cd.name() + "'.");
-
-		// We need to set this here so we can retrieve it when we generate
-		// field initializers for an existing constructor.
-		currentClass = cd;
-
-		// YOUR CODE HERE
-
-		return null;
-	}
-
-	// CONSTRUCTOR DECLARATION (YET TO COMPLETE)
-	public Object visitConstructorDecl(ConstructorDecl cd) {
-		println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
-
-		classFile.startMethod(cd);
-		classFile.addComment(cd, "Constructor Declaration");
-
-		// 12/05/13 = removed if (just in case this ever breaks ;-) )
-		cd.cinvocation().visit(this);
-
-		// YOUR CODE HERE
-
-		classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
-
-		// We are done generating code for this method, so transfer it to the classDecl.
-		cd.setCode(classFile.getCurrentMethodCode());
-		classFile.endMethod();
-
-		return null;
-	}
-
-
-	// CONTINUE STATEMENT (COMPLETE)
+	// CONTINUE STATEMENT (COMPLETED)
 	public Object visitContinueStat(ContinueStat cs) {
 		println(cs.line + ": ContinueStat:\tGenerating code.");
 		classFile.addComment(cs, "Continue Statement");
@@ -300,7 +190,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// DO STATEMENT (COMPLETE)
+	// DO STATEMENT (COMPLETED)
 	public Object visitDoStat(DoStat ds) {
 		println(ds.line + ": DoStat:\tGenerating code.");
 		classFile.addComment(ds, "Do Statement");
@@ -343,8 +233,7 @@ class GenerateCode extends Visitor {
 		return null; 
 	}
 
-
-	// EXPRESSION STATEMENT (COMPLETE)
+	// EXPRESSION STATEMENT (PROVIDED)
 	public Object visitExprStat(ExprStat es) {	
 		println(es.line + ": ExprStat:\tVisiting an Expression Statement.");
 		classFile.addComment(es, "Expression Statement");
@@ -375,7 +264,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// FIELD DECLARATION (COMPLETE)
+	// FIELD DECLARATION (PROVIDED)
 	public Object visitFieldDecl(FieldDecl fd) {
 		println(fd.line + ": FieldDecl:\tGenerating code.");
 
@@ -384,7 +273,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// FIELD REFERENCE (COMPLETE)
+	// FIELD REFERENCE (PROVIDED)
 	public Object visitFieldRef(FieldRef fr) {
 		println(fr.line + ": FieldRef:\tGenerating code (getfield code only!).");
 
@@ -419,100 +308,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-
-	// FOR STATEMENT (COMPLETE)
-	public Object visitForStat(ForStat fs) {
-		println(fs.line + ": ForStat:\tGenerating code.");
-		classFile.addComment(fs, "For Statement");
-		
-		// YOUR CODE HERE
-		String topLabel = "L"+gen.getLabel();
-		String endLabel = "L"+gen.getLabel();
-		String contLabel = "L"+gen.getLabel();
-		
-		String metaBreakLabel = gen.getBreakLabel();
-		String metaContinueLabel = gen.getContinueLabel();
-		gen.setBreakLabel(endLabel);
-		gen.setContinueLabel(contLabel);
-		
-		if (fs.init() != null) {
-			fs.init().visit(this);
-		}
-		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-		
-		if (fs.expr() != null) {
-			fs.expr().visit(this);
-			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
-		}
-		
-		boolean metaInsideLoop = insideLoop;
-		insideLoop = true;
-		if (fs.stats() != null) {
-			fs.stats().visit(this);
-		}
-		insideLoop = metaInsideLoop;
-		
-		if (fs.incr() != null) {
-			fs.incr().visit(this);
-		}
-		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
-		
-		gen.setBreakLabel(metaBreakLabel);
-		gen.setContinueLabel(metaContinueLabel);
-		// - END -
-		
-		classFile.addComment(fs, "End ForStat");	
-		return null;
-	}
-
-	// IF STATEMENT (COMPLETE)
-	public Object visitIfStat(IfStat is) {
-		println(is.line + ": IfStat:\tGenerating code.");
-		classFile.addComment(is, "If Statement");
-
-		// YOUR CODE HERE
-		String elseLabel = "L"+gen.getLabel();
-		String endLabel = "L"+gen.getLabel();
-		
-		is.expr().visit(this);
-		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, elseLabel));
-		
-		if (is.thenpart() != null) {
-			is.thenpart().visit(this);
-			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, endLabel));
-		}
-		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
-		
-		if (is.elsepart() != null) {
-			is.elsepart().visit(this);
-		}
-		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
-		// - END -
-		
-		classFile.addComment(is,  "End IfStat");
-		return null;
-	}
-
-
-	// INVOCATION (YET TO COMPLETE)
-	public Object visitInvocation(Invocation in) {
-	    println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
-		classFile.addComment(in, "Invocation");
-		// YOUR CODE HERE
-
-		classFile.addComment(in, "End Invocation");
-
-
-		return null;
-	}
-
-	// LITERAL (COMPLETE)
+	// LITERAL (PROVIDED)
 	public Object visitLiteral(Literal li) {
 		println(li.line + ": Literal:\tGenerating code for Literal '" + li.getText() + "'.");
 		classFile.addComment(li, "Literal");
@@ -550,23 +346,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// LOCAL VARIABLE DECLARATION (YET TO COMPLETE)
-	public Object visitLocalDecl(LocalDecl ld) {
-		if (ld.var().init() != null) {
-			println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
-					ld.var().name().getname() + "'.");
-			classFile.addComment(ld, "Local Variable Declaration");
-
-			// YOUR CODE HERE
-			classFile.addComment(ld, "End LocalDecl");
-		}
-		else
-			println(ld.line + ": LocalDecl:\tVisiting local variable declaration for variable '" + ld.var().name().getname() + "'.");
-
-		return null;
-	}
-
-	// METHOD DECLARATION (COMPLETE)
+	// METHOD DECLARATION (PROVIDED)
 	public Object visitMethodDecl(MethodDecl md) {
 		println(md.line + ": MethodDecl:\tGenerating code for method '" + md.name().getname() + "'.");	
 		classFile.startMethod(md);
@@ -579,73 +359,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-
-	// NAME EXPRESSION (YET TO COMPLETE)
-	public Object visitNameExpr(NameExpr ne) {
-		classFile.addComment(ne, "Name Expression --");
-
-		// ADDED 22 June 2012 
-		if (ne.myDecl instanceof ClassDecl) {
-			println(ne.line + ": NameExpr:\tWas a class name - skip it :" + ne.name().getname());
-			classFile.addComment(ne, "End NameExpr");
-			return null;
-		}
-
-		// YOUR CODE HERE
-
-		classFile.addComment(ne, "End NameExpr");
-		return null;
-	}
-
-	// NEW (YET TO COMPLETE)
-	public Object visitNew(New ne) {
-		println(ne.line + ": New:\tGenerating code");
-		classFile.addComment(ne, "New");
-
-		// YOUR CODE HERE
-
-		classFile.addComment(ne, "End New");
-		return null;
-	}
-
-	// RETURN STATEMENT (YET TO COMPLETE)
-	public Object visitReturnStat(ReturnStat rs) {
-		println(rs.line + ": ReturnStat:\tGenerating code.");
-		classFile.addComment(rs, "Return Statement");
-
-		// YOUR CODE HERE
-
-		classFile.addComment(rs, "End ReturnStat");
-		return null;
-	}
-
-	// STATIC INITIALIZER (YET TO COMPLETE)
-	public Object visitStaticInitDecl(StaticInitDecl si) {
-		println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
-
-		classFile.startMethod(si);
-		classFile.addComment(si, "Static Initializer");
-
-		// YOUR CODE HERE
-
-		si.setCode(classFile.getCurrentMethodCode());
-		classFile.endMethod();
-		return null;
-	}
-
-	// SUPER (YET TO COMPLETE)
-	public Object visitSuper(Super su) {
-		println(su.line + ": Super:\tGenerating code (access).");	
-		classFile.addComment(su, "Super");
-
-		// YOUR CODE HERE
-		// Should be the same as visitThis except it loads address 0
-
-		classFile.addComment(su, "End Super");
-		return null;
-	}
-
-	// SWITCH STATEMENT (COMPLETE)
+	// SWITCH STATEMENT (PROVIDED)
 	public Object visitSwitchStat(SwitchStat ss) {
 		println(ss.line + ": Switch Statement:\tGenerating code for Switch Statement.");
 		int def = -1;
@@ -710,54 +424,55 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// TERNARY EXPRESSION (YET TO COMPLETE)
-	public Object visitTernary(Ternary te) {
-		println(te.line + ": Ternary:\tGenerating code.");
-		classFile.addComment(te, "Ternary Statement");
-
-		boolean OldStringBuilderCreated = StringBuilderCreated;
-		StringBuilderCreated = false;
-
+	// FOR STATEMENT (COMPLETED)
+	public Object visitForStat(ForStat fs) {
+		println(fs.line + ": ForStat:\tGenerating code.");
+		classFile.addComment(fs, "For Statement");
+		
 		// YOUR CODE HERE
-		classFile.addComment(te, "Ternary");
-		StringBuilderCreated = OldStringBuilderCreated;
+		String topLabel = "L"+gen.getLabel();
+		String endLabel = "L"+gen.getLabel();
+		String contLabel = "L"+gen.getLabel();
+		
+		String metaBreakLabel = gen.getBreakLabel();
+		String metaContinueLabel = gen.getContinueLabel();
+		gen.setBreakLabel(endLabel);
+		gen.setContinueLabel(contLabel);
+		
+		if (fs.init() != null) {
+			fs.init().visit(this);
+		}
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		
+		if (fs.expr() != null) {
+			fs.expr().visit(this);
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+		}
+		
+		boolean metaInsideLoop = insideLoop;
+		insideLoop = true;
+		if (fs.stats() != null) {
+			fs.stats().visit(this);
+		}
+		insideLoop = metaInsideLoop;
+		
+		if (fs.incr() != null) {
+			fs.incr().visit(this);
+		}
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		
+		gen.setBreakLabel(metaBreakLabel);
+		gen.setContinueLabel(metaContinueLabel);
+		// - END -
+		
+		classFile.addComment(fs, "End ForStat");	
 		return null;
 	}
 
-	// THIS (YET TO COMPLETE)
-	public Object visitThis(This th) {
-		println(th.line + ": This:\tGenerating code (access).");       
-		classFile.addComment(th, "This");
-
-		// YOUR CODE HERE
-
-		classFile.addComment(th, "End This");
-		return null;
-	}
-
-	// UNARY POST EXPRESSION (YET TO COMPLETE)
-	public Object visitUnaryPostExpr(UnaryPostExpr up) {
-		println(up.line + ": UnaryPostExpr:\tGenerating code.");
-		classFile.addComment(up, "Unary Post Expression");
-
-		// YOUR CODE HERE
-
-		classFile.addComment(up, "End UnaryPostExpr");
-		return null;
-	}
-
-	// UNARY PRE EXPRESSION (YET TO COMPLETE)
-	public Object visitUnaryPreExpr(UnaryPreExpr up) {
-		println(up.line + ": UnaryPreExpr:\tGenerating code for " + up.op().operator() + " : " + up.expr().type.typeName() + " -> " + up.expr().type.typeName() + ".");
-		classFile.addComment(up,"Unary Pre Expression");
-
-		// YOUR CODE HERE
-
-		classFile.addComment(up, "End UnaryPreExpr");
-		return null;
-	}
-
-	// WHILE STATEMENT (COMPLETE)
+	// WHILE STATEMENT (COMPLETED)
 	public Object visitWhileStat(WhileStat ws) {
 		println(ws.line + ": While Stat:\tGenerating Code.");
 
@@ -797,5 +512,327 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ws, "End WhileStat");	
 		return null;
 	}
+
+	// IF STATEMENT (COMPLETED)
+	public Object visitIfStat(IfStat is) {
+		println(is.line + ": IfStat:\tGenerating code.");
+		classFile.addComment(is, "If Statement");
+
+		// YOUR CODE HERE
+		String elseLabel = "L"+gen.getLabel();
+		String endLabel = "L"+gen.getLabel();
+		
+		is.expr().visit(this);
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, elseLabel));
+		
+		if (is.thenpart() != null) {
+			is.thenpart().visit(this);
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, endLabel));
+		}
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
+		
+		if (is.elsepart() != null) {
+			is.elsepart().visit(this);
+		}
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		// - END -
+		
+		classFile.addComment(is,  "End IfStat");
+		return null;
+	}
+
+	// INVOCATION (YET TO COMPLETE)
+	public Object visitInvocation(Invocation in) {
+	    println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
+		classFile.addComment(in, "Invocation");
+		
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(in, "End Invocation");
+		return null;
+	}
+
+	// LOCAL VARIABLE DECLARATION (YET TO COMPLETE)
+	public Object visitLocalDecl(LocalDecl ld) {
+		if (ld.var().init() != null) {
+			println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
+					ld.var().name().getname() + "'.");
+			classFile.addComment(ld, "Local Variable Declaration");
+
+			// YOUR CODE HERE
+
+			// - END -
+
+			classFile.addComment(ld, "End LocalDecl");
+		}
+		else
+			println(ld.line + ": LocalDecl:\tVisiting local variable declaration for variable '" + ld.var().name().getname() + "'.");
+
+		return null;
+	}
+
+	// NAME EXPRESSION (YET TO COMPLETE)
+	public Object visitNameExpr(NameExpr ne) {
+		classFile.addComment(ne, "Name Expression --");
+
+		// ADDED 22 June 2012 
+		if (ne.myDecl instanceof ClassDecl) {
+			println(ne.line + ": NameExpr:\tWas a class name - skip it :" + ne.name().getname());
+			classFile.addComment(ne, "End NameExpr");
+			return null;
+		}
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(ne, "End NameExpr");
+		return null;
+	}
+
+	// NEW (YET TO COMPLETE)
+	public Object visitNew(New ne) {
+		println(ne.line + ": New:\tGenerating code");
+		classFile.addComment(ne, "New");
+
+		// YOUR CODE HERE
+
+		classFile.addComment(ne, "End New");
+		return null;
+	}
+
+	// RETURN STATEMENT (YET TO COMPLETE)
+	public Object visitReturnStat(ReturnStat rs) {
+		println(rs.line + ": ReturnStat:\tGenerating code.");
+		classFile.addComment(rs, "Return Statement");
+
+		// YOUR CODE HERE
+
+		classFile.addComment(rs, "End ReturnStat");
+		return null;
+	}
+
+	// STATIC INITIALIZER (YET TO COMPLETE)
+	public Object visitStaticInitDecl(StaticInitDecl si) {
+		println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
+
+		classFile.startMethod(si);
+		classFile.addComment(si, "Static Initializer");
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		si.setCode(classFile.getCurrentMethodCode());
+		classFile.endMethod();
+		return null;
+	}
+
+	// SUPER (YET TO COMPLETE)
+	public Object visitSuper(Super su) {
+		println(su.line + ": Super:\tGenerating code (access).");	
+		classFile.addComment(su, "Super");
+
+		// YOUR CODE HERE
+		// Should be the same as visitThis except it loads address 0
+		// - END -
+
+		classFile.addComment(su, "End Super");
+		return null;
+	}
+
+	// TERNARY EXPRESSION (YET TO COMPLETE)
+	public Object visitTernary(Ternary te) {
+		println(te.line + ": Ternary:\tGenerating code.");
+		classFile.addComment(te, "Ternary Statement");
+
+		boolean OldStringBuilderCreated = StringBuilderCreated;
+		StringBuilderCreated = false;
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(te, "Ternary");
+		StringBuilderCreated = OldStringBuilderCreated;
+		return null;
+	}
+
+	// THIS (YET TO COMPLETE)
+	public Object visitThis(This th) {
+		println(th.line + ": This:\tGenerating code (access).");       
+		classFile.addComment(th, "This");
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(th, "End This");
+		return null;
+	}
+
+	// UNARY POST EXPRESSION (YET TO COMPLETE)
+	public Object visitUnaryPostExpr(UnaryPostExpr up) {
+		println(up.line + ": UnaryPostExpr:\tGenerating code.");
+		classFile.addComment(up, "Unary Post Expression");
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(up, "End UnaryPostExpr");
+		return null;
+	}
+
+	// UNARY PRE EXPRESSION (YET TO COMPLETE)
+	public Object visitUnaryPreExpr(UnaryPreExpr up) {
+		println(up.line + ": UnaryPreExpr:\tGenerating code for " + up.op().operator() + " : " + up.expr().type.typeName() + " -> " + up.expr().type.typeName() + ".");
+		classFile.addComment(up,"Unary Pre Expression");
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(up, "End UnaryPreExpr");
+		return null;
+	}
+
+	// BINARY EXPRESSION (YET TO COMPLETE)
+
+    public Object visitBinaryExpr(BinaryExpr be) {
+		println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
+		classFile.addComment(be, "Binary Expression");
+			
+		// YOUR CODE HERE
+		
+		// - END -
+
+		classFile.addComment(be, "End BinaryExpr");
+		return null;
+    }
+
+    // BREAK STATEMENT (YET TO COMPLETE)
+    public Object visitBreakStat(BreakStat br) {
+		println(br.line + ": BreakStat:\tGenerating code.");
+		classFile.addComment(br, "Break Statement");
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(br, "End BreakStat");
+		return null;
+    }
+
+    // CAST EXPRESSION (YET TO COMPLETE)
+    public Object visitCastExpr(CastExpr ce) {
+		println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
+		classFile.addComment(ce, "Cast Expression");
+		String instString;
+		
+		// YOUR CODE HERE
+		
+		// - END -
+
+		classFile.addComment(ce, "End CastExpr");
+		return null;
+    }
+    
+	// CONSTRUCTOR INVOCATION (EXPLICIT) (YET TO COMPLETE)
+	public Object visitCInvocation(CInvocation ci) {
+		println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
+		classFile.addComment(ci, "Explicit Constructor Invocation");
+
+		// YOUR CODE HERE
+		
+
+		// - END -
+
+		classFile.addComment(ci, "End CInvocation");
+		return null;
+	}
+
+	// CLASS DECLARATION (YET TO COMPLETE)
+	public Object visitClassDecl(ClassDecl cd) {
+		println(cd.line + ": ClassDecl:\tGenerating code for class '" + cd.name() + "'.");
+
+		// We need to set this here so we can retrieve it when we generate
+		// field initializers for an existing constructor.
+		currentClass = cd;
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		return null;
+	}
+
+	// CONSTRUCTOR DECLARATION (YET TO COMPLETE)
+	public Object visitConstructorDecl(ConstructorDecl cd) {
+		println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
+
+		classFile.startMethod(cd);
+		classFile.addComment(cd, "Constructor Declaration");
+
+		// 12/05/13 = removed if (just in case this ever breaks ;-) )
+		cd.cinvocation().visit(this);
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
+
+		// We are done generating code for this method, so transfer it to the classDecl.
+		cd.setCode(classFile.getCurrentMethodCode());
+		classFile.endMethod();
+
+		return null;
+	}
+
+	// ARRAY VISITORS START HERE
+
+	/** ArrayAccessExpr (YET TO COMPLETE)*/
+	public Object visitArrayAccessExpr(ArrayAccessExpr ae) {
+		println(ae.line + ": Visiting ArrayAccessExpr");
+		classFile.addComment(ae, "ArrayAccessExpr");
+
+		// YOUR CODE HERE
+		
+		// - END -
+		
+		classFile.addComment(ae,"End ArrayAccessExpr");
+		return null;
+	}
+
+	/** ArrayLiteral (YET TO COMPLETE)*/
+	public Object visitArrayLiteral(ArrayLiteral al) {
+		println(al.line + ": Visiting an ArrayLiteral ");
+		
+		// YOUR CODE HERE
+		
+		// - END -
+
+		return null;
+	}
+
+	/** NewArray (YET TO COMPLETE)*/
+	public Object visitNewArray(NewArray ne) {
+		println(ne.line + ": NewArray:\t Creating new array of type " + ne.type.typeName());
+		
+		// YOUR CODE HERE
+		
+		// - END -
+
+		return null;
+	}
+
+	// END OF ARRAY VISITORS
+
 }
 
