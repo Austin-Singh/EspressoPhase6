@@ -19,7 +19,7 @@ class AllocateAddresses extends Visitor {
     public Object visitBlock(Block bl) {
     	// YOUR CODE HERE
         int tempAddress = gen.getAddress();
-        bl.visitChldren(this);
+        bl.visitChildren(this);
         gen.setAddress(tempAddress);
         // - END -
         return null;   
@@ -31,7 +31,7 @@ class AllocateAddresses extends Visitor {
 		// YOUR CODE HERE
 		ld.address = gen.getAddress();
 		
-		if (ld.type()isDoubleType() || ld.type()isLongType()) {
+		if (ld.type().isDoubleType() || ld.type().isLongType()) {
 			gen.inc2Address();
 		}
 		else {
@@ -48,7 +48,7 @@ class AllocateAddresses extends Visitor {
 		// YOUR CODE HERE
 		pd.address = gen.getAddress();
 		
-		if (pd.type()isDoubleType() || pd.type()isLongType()) {
+		if (pd.type().isDoubleType() || pd.type().isLongType()) {
 			gen.inc2Address();
 		}
 		else {

@@ -376,11 +376,50 @@ class GenerateCode extends Visitor {
 	}
 
 
-	// FOR STATEMENT (YET TO COMPLETE)
+	// FOR STATEMENT (COMPLETE)
 	public Object visitForStat(ForStat fs) {
 		println(fs.line + ": ForStat:\tGenerating code.");
 		classFile.addComment(fs, "For Statement");
+		
 		// YOUR CODE HERE
+		String topLabel = "L"+gen.getLabel();
+		String endLabel = "L"+gen.getLabel();
+		String contLabel = "L"+gen.getLabel();
+		
+		String metaBreakLabel = gen.getBreakLabel();
+		String metaContinueLabel = gen.getContinueLabel();
+		gen.setBreakLabel(endLabel);
+		gen.setContinueLabel(contLabel);
+		
+		if (fs.init() != null) {
+			fs.init().visit(this);
+		}
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		
+		if (fs.expr() != null) {
+			fs.expr().visit(this);
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+		}
+		
+		boolean metaInsideLoop = insideLoop;
+		insideLoop = true;
+		if (fs.stats() != null) {
+			fs.stats().visit(this);
+		}
+		insideLoop = metaInsideLoop;
+		
+		if (fs.incr() != null) {
+			fs.incr().visit(this);
+		}
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		
+		gen.setBreakLabel(metaBreakLabel);
+		gen.setContinueLabel(metaContinueLabel);
+		// - END -
+		
 		classFile.addComment(fs, "End ForStat");	
 		return null;
 	}
@@ -391,6 +430,7 @@ class GenerateCode extends Visitor {
 		classFile.addComment(is, "If Statement");
 
 		// YOUR CODE HERE
+		
 		classFile.addComment(is,  "End IfStat");
 		return null;
 	}
@@ -653,13 +693,42 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// WHILE STATEMENT (YET TO COMPLETE)
+	// WHILE STATEMENT (COMPLETE)
 	public Object visitWhileStat(WhileStat ws) {
 		println(ws.line + ": While Stat:\tGenerating Code.");
 
 		classFile.addComment(ws, "While Statement");
 
 		// YOUR CODE HERE
+		String topLabel = "L"+gen.getLabel();
+		String endLabel = "L"+gen.getLabel();
+		
+		String metaContinueLabel = gen.getContinueLabel();
+		String metaBreakLabel = gen.getBreakLabel();
+		
+		gen.setContinueLabel(topLabel);
+		gen.setBreakLabel(endLabel);
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		
+		if (ws.expr() != null) {
+			ws.expr().visit(this);
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+		}
+		
+		boolean metaInsideLoop = insideLoop;
+		insideLoop = true;
+		if (ws.stat() != null) {
+			ws.stat().visit(this);
+		}
+		insideLoop = metaInsideLoop;
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		
+		gen.setContinueLabel(metaContinueLabel);
+		gen.setBreakLabel(metaBreakLabel);
+		// - END -
 
 		classFile.addComment(ws, "End WhileStat");	
 		return null;
