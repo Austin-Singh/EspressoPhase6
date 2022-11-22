@@ -44,6 +44,7 @@ class GenerateCode extends Visitor {
 		println(ae.line + ": Visiting ArrayAccessExpr");
 		classFile.addComment(ae, "ArrayAccessExpr");
 		// YOUR CODE HERE
+		
 		classFile.addComment(ae,"End ArrayAccessExpr");
 		return null;
 	}
@@ -52,6 +53,7 @@ class GenerateCode extends Visitor {
 	public Object visitArrayLiteral(ArrayLiteral al) {
 		println(al.line + ": Visiting an ArrayLiteral ");
 		// YOUR CODE HERE
+		
 		return null;
 	}
 
@@ -59,6 +61,7 @@ class GenerateCode extends Visitor {
 	public Object visitNewArray(NewArray ne) {
 		println(ne.line + ": NewArray:\t Creating new array of type " + ne.type.typeName());
 		// YOUR CODE HERE
+		
 		return null;
 	}
 
@@ -207,6 +210,7 @@ class GenerateCode extends Visitor {
 	classFile.addComment(be, "Binary Expression");
 		
 	// YOUR CODE HERE
+	
 	classFile.addComment(be, "End BinaryExpr");
 	return null;
     }
@@ -228,6 +232,7 @@ class GenerateCode extends Visitor {
 	classFile.addComment(ce, "Cast Expression");
 	String instString;
 	// YOUR CODE HERE
+	
 	classFile.addComment(ce, "End CastExpr");
 	return null;
     }
@@ -238,6 +243,7 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ci, "Explicit Constructor Invocation");
 
 		// YOUR CODE HERE
+		
 		classFile.addComment(ci, "End CInvocation");
 		return null;
 	}
@@ -277,23 +283,61 @@ class GenerateCode extends Visitor {
 	}
 
 
-	// CONTINUE STATEMENT (YET TO COMPLETE)
+	// CONTINUE STATEMENT (COMPLETE)
 	public Object visitContinueStat(ContinueStat cs) {
 		println(cs.line + ": ContinueStat:\tGenerating code.");
 		classFile.addComment(cs, "Continue Statement");
 
 		// YOUR CODE HERE
+		if (!insideLoop) {
+			Error.error(cs, "Continue statement must be inside a loop.");
+		}
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L"+gen.getContinueLabel()));
+		// - END -
 
 		classFile.addComment(cs, "End ContinueStat");
 		return null;
 	}
 
-	// DO STATEMENT (YET TO COMPLETE)
+	// DO STATEMENT (COMPLETE)
 	public Object visitDoStat(DoStat ds) {
 		println(ds.line + ": DoStat:\tGenerating code.");
 		classFile.addComment(ds, "Do Statement");
 
 		// YOUR CODE HERE
+		String topLabel = "L"+gen.getLabel();
+		String endLabel = "L"+gen.getLabel();
+		String contLabel = "L"+gen.getLabel();
+		
+		String metaBreakLabel = gen.getBreakLabel();
+		String metaContinueLabel = gen.getContinueLabel();
+		
+		gen.setBreakLabel(endLabel);
+		gen.setContinueLabel(contLabel);
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		
+		boolean metaInsideLoop = insideLoop;
+		insideLoop = true;
+		if (ds.stat() != null) {
+			ds.stat().visit(this);
+		}
+		insideLoop = metaInsideLoop;
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, contLabel));
+		
+		if (ds.expr() != null) {
+			ds.expr().visit(this);
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+		}
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		
+		gen.setBreakLabel(metaBreakLabel);
+		gen.setContinueLabel(metaContinueLabel);
+		// - END -
 
 		classFile.addComment(ds, "End DoStat");
 		return null; 
@@ -424,12 +468,32 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// IF STATEMENT (YET TO COMPLETE)
+	// IF STATEMENT (COMPLETE)
 	public Object visitIfStat(IfStat is) {
 		println(is.line + ": IfStat:\tGenerating code.");
 		classFile.addComment(is, "If Statement");
 
 		// YOUR CODE HERE
+		String elseLabel = "L"+gen.getLabel();
+		String endLabel = "L"+gen.getLabel();
+		
+		is.expr().visit(this);
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, elseLabel));
+		
+		if (is.thenpart() != null) {
+			is.thenpart().visit(this);
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, endLabel));
+		}
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
+		
+		if (is.elsepart() != null) {
+			is.elsepart().visit(this);
+		}
+		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		// - END -
 		
 		classFile.addComment(is,  "End IfStat");
 		return null;
