@@ -1,21 +1,18 @@
 package CodeGenerator;
-
 import AST.*;
 import Utilities.Error;
 import Utilities.Visitor;
-
 import java.util.*;
-
 import Instruction.*;
 import Jasmin.*;
 
 class GenerateCode extends Visitor {
 
 	private Generator gen;
+	private ClassFile classFile;
 	private ClassDecl currentClass;
 	private boolean insideLoop = false;
 	private boolean insideSwitch = false;
-	private ClassFile classFile;
 	private boolean RHSofAssignment = false;
 
 
@@ -646,23 +643,6 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// TERNARY EXPRESSION (YET TO COMPLETE)
-	public Object visitTernary(Ternary te) {
-		println(te.line + ": Ternary:\tGenerating code.");
-		classFile.addComment(te, "Ternary Statement");
-
-		boolean OldStringBuilderCreated = StringBuilderCreated;
-		StringBuilderCreated = false;
-
-		// YOUR CODE HERE
-
-		// - END -
-
-		classFile.addComment(te, "Ternary");
-		StringBuilderCreated = OldStringBuilderCreated;
-		return null;
-	}
-
 	// THIS (YET TO COMPLETE)
 	public Object visitThis(This th) {
 		println(th.line + ": This:\tGenerating code (access).");       
@@ -703,7 +683,6 @@ class GenerateCode extends Visitor {
 	}
 
 	// BINARY EXPRESSION (YET TO COMPLETE)
-
     public Object visitBinaryExpr(BinaryExpr be) {
 		println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
 		classFile.addComment(be, "Binary Expression");
@@ -795,22 +774,38 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// ARRAY VISITORS START HERE
+	// TERNARY EXPRESSION (YET TO COMPLETE - E+)
+	public Object visitTernary(Ternary te) {
+		println(te.line + ": Ternary:\tGenerating code.");
+		classFile.addComment(te, "Ternary Statement");
 
-	/** ArrayAccessExpr (YET TO COMPLETE)*/
+		boolean OldStringBuilderCreated = StringBuilderCreated;
+		StringBuilderCreated = false;
+
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(te, "Ternary");
+		StringBuilderCreated = OldStringBuilderCreated;
+		return null;
+	}
+
+	// ARRAY VISITORS START HERE
+	/** ArrayAccessExpr (YET TO COMPLETE - E++)*/
 	public Object visitArrayAccessExpr(ArrayAccessExpr ae) {
 		println(ae.line + ": Visiting ArrayAccessExpr");
 		classFile.addComment(ae, "ArrayAccessExpr");
 
 		// YOUR CODE HERE
-		
+
 		// - END -
-		
+
 		classFile.addComment(ae,"End ArrayAccessExpr");
 		return null;
 	}
 
-	/** ArrayLiteral (YET TO COMPLETE)*/
+	/** ArrayLiteral (YET TO COMPLETE - E++)*/
 	public Object visitArrayLiteral(ArrayLiteral al) {
 		println(al.line + ": Visiting an ArrayLiteral ");
 		
@@ -821,7 +816,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	/** NewArray (YET TO COMPLETE)*/
+	/** NewArray (YET TO COMPLETE - E++)*/
 	public Object visitNewArray(NewArray ne) {
 		println(ne.line + ": NewArray:\t Creating new array of type " + ne.type.typeName());
 		
@@ -831,7 +826,6 @@ class GenerateCode extends Visitor {
 
 		return null;
 	}
-
 	// END OF ARRAY VISITORS
 
 }
