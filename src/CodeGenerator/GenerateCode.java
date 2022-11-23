@@ -570,7 +570,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 	
-	// THIS (COMPLETED)
+	// THIS (COMPLETED - LOAD1?)
 	public Object visitThis(This th) {
 		println(th.line + ": This:\tGenerating code (access).");       
 		classFile.addComment(th, "This");
@@ -808,7 +808,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// SUPER (YET TO COMPLETE)
+	// SUPER (COMPLETED - LOAD0?)
 	public Object visitSuper(Super su) {
 		println(su.line + ": Super:\tGenerating code (access).");	
 		classFile.addComment(su, "Super");
@@ -816,7 +816,7 @@ class GenerateCode extends Visitor {
 		// YOUR CODE HERE
 		// "Should be the same as visitThis except it loads address 0"
 		// Wait 'this' loads address 0, maybe super loads a different address? Might be in the book 
-		
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 		// - END -
 
 		classFile.addComment(su, "End Super");
