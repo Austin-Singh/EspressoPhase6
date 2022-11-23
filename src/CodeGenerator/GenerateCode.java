@@ -823,7 +823,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// UNARY POST EXPRESSION (YET TO COMPLETE)
+	// UNARY POST EXPRESSION (COMPLETED)
 	public Object visitUnaryPostExpr(UnaryPostExpr up) {
 		println(up.line + ": UnaryPostExpr:\tGenerating code.");
 		classFile.addComment(up, "Unary Post Expression");
@@ -879,13 +879,85 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// UNARY PRE EXPRESSION (YET TO COMPLETE)
+	// UNARY PRE EXPRESSION (COMPLETED)
 	public Object visitUnaryPreExpr(UnaryPreExpr up) {
 		println(up.line + ": UnaryPreExpr:\tGenerating code for " + up.op().operator() + " : " + up.expr().type.typeName() + " -> " + up.expr().type.typeName() + ".");
 		classFile.addComment(up,"Unary Pre Expression");
 
 		// YOUR CODE HERE
+		up.expr().visit(this);
+		if (up.op().operator().equals("−")){
+
+			if (up.expr().type.isIntegerType()){
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ineg));
+			} else if (up.expr().type.isLongType()){
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lneg));
+			}else if (up.expr().type.isFloatType())
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_fneg));
+			else if (up.expr().type.isDoubleType()){
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dneg));
+			}
+
+		}else if (up.op().operator().equals("+")){
+
+			// do nothing.
+
+		}else if (up.op().operator().equals("~")) {
 		
+			if (up.expr().type.isIntegerType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_m1));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ixor));
+			} else {
+				int operand = -1;
+				classFile.addInstruction(new SimpleInstruction(RuntimeConstants.opc_ldc2_w, operand));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lxor));
+			}
+
+		} else if (up.op().operator().equals("!")) {
+
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_ixor));
+
+		} else {
+				
+			if (up.expr().type.isIntegerType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1)); classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_iadd : RuntimeConstants.opc_isub));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
+			} else if (up.expr().type.isLongType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
+				classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_ladd : RuntimeConstants.opc_lsub));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup2));
+			} else if (up.expr().type.isFloatType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
+				classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_fadd : RuntimeConstants.opc_fsub));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
+			} else if (up.expr().type.isDoubleType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1));
+				classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_dadd : RuntimeConstants.opc_dsub));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup2));
+			}
+
+			if (up.expr() instanceof FieldRef) {
+				FieldRef fr = (FieldRef)up.expr();
+				FieldDecl fd = fr.myDecl;
+				println(up.line + ": UnaryPreExpr:\tGenerating code (FieldRef putfield) for field ’" + fr.fieldName().getname() + "’ in class ’" + fr.targetType.typeName() + "’.");
+			} else if (up.expr() instanceof NameExpr) {
+				NameExpr ne = (NameExpr)up.expr();
+				if (ne.myDecl instanceof FieldDecl) {
+					FieldDecl fd = (FieldDecl)ne.myDecl;
+					println(up.line + ": UnaryPreExpr:\tGenerating code (FieldRef putfield) for field ’" + fd.var().name().getname() + "’ in class ’" + currentClass.name() + "’.");
+				} else {
+					println(up.line + ": UnaryPreExpr:\tGenerating code (local/param store) for var’" + ((VarDecl)ne.myDecl).name() + "’.");
+					int address = ((VarDecl)ne.myDecl).address();
+					if (address < 4){
+						classFile.addInstruction(new Instruction(gen.getStoreInstruction(((VarDecl)ne.myDecl).type(), address, false)));
+					}else{
+						classFile.addInstruction(new SimpleInstruction(gen.getStoreInstruction(((VarDecl)ne.myDecl).type(),address, false), address));
+					}
+				}
+			}
+
+		}
 		// - END -
 
 		classFile.addComment(up, "End UnaryPreExpr");
