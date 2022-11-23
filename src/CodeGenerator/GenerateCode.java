@@ -756,7 +756,32 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ne, "New");
 
 		// YOUR CODE HERE
+		classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_new, ne.type().typeName()));
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
 		
+		if (ne.args() != null) {
+			for (int i=0; i<ne.args().nchildren; i++) {
+				ne.args().children[i].visit(this);
+				gen.dataConvert(((Expression)ne.args().children[i]).type,((ParamDecl)ne.getConstructorDecl().params().children[i]).type());
+			}
+		}
+
+		String signature;
+		if (ne.getConstructorDecl() != null) {
+			signature = "(";
+			if (ne.getConstructorDecl().params() != null){
+				ne.getConstructorDecl().params().visit(this);
+			}
+
+			for (int i=0; i<ne.getConstructorDecl().params().nchildren; i++){
+				signature += ((ParamDecl)ne.getConstructorDecl().params().children[i]).type().signature();
+				signature += ")V";
+			}
+
+			classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, ne.type().typeName(), "<init>", signature));
+		} else {
+			signature = "()V";
+		}
 		// - END -
 
 		classFile.addComment(ne, "End New");
