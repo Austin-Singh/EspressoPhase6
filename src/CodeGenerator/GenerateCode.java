@@ -540,7 +540,92 @@ class GenerateCode extends Visitor {
 		classFile.addComment(is,  "End IfStat");
 		return null;
 	}
+	
+	// RETURN STATEMENT (COMPLETE)
+	public Object visitReturnStat(ReturnStat rs) {
+		println(rs.line + ": ReturnStat:\tGenerating code.");
+		classFile.addComment(rs, "Return Statement");
 
+		// YOUR CODE HERE
+		if (rs.expr() == null) {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
+		}
+		else {
+			rs.expr().visit(this);
+			
+			if (rs.getType().isClassType() || rs.getType().isStringType() || rs.getType().isNullType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_areturn));
+			}
+			else if (rs.getType().isFloatType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_freturn));
+			}
+			else if (rs.getType().isLongType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lreturn));
+			}
+			else if (rs.getType().isDoubleType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dreturn));
+			}
+			else if (rs.getType().isIntegerType() || rs.getType().isBooleanType() || rs.getType().isByteType() || rs.getType().isCharType() || rs.getType().isShortType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ireturn));
+			}
+		}
+		// - END -
+
+		classFile.addComment(rs, "End ReturnStat");
+		return null;
+	}
+	
+	// THIS (COMPLETE)
+	public Object visitThis(This th) {
+		println(th.line + ": This:\tGenerating code (access).");       
+		classFile.addComment(th, "This");
+
+		// YOUR CODE HERE
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+		// - END -
+
+		classFile.addComment(th, "End This");
+		return null;
+	}
+
+    // BREAK STATEMENT (COMPLETE)
+    public Object visitBreakStat(BreakStat br) {
+		println(br.line + ": BreakStat:\tGenerating code.");
+		classFile.addComment(br, "Break Statement");
+
+		// YOUR CODE HERE
+		if (!insideLoop && !insideSwitch) {
+			Error.error(br, "Break statement must be inside a loop or a switch.");
+		}
+		
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, gen.getBreakLabel()));
+		// - END -
+
+		classFile.addComment(br, "End BreakStat");
+		return null;
+    }
+    
+	// LOCAL VARIABLE DECLARATION (COMPLETE)
+	public Object visitLocalDecl(LocalDecl ld) {
+		if (ld.var().init() != null) {
+			println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
+					ld.var().name().getname() + "'.");
+			classFile.addComment(ld, "Local Variable Declaration");
+
+			// YOUR CODE HERE
+			ld.var().init().visit(this);
+			gen.dataConvert(ld.var().init().type, ld.type());
+			classFile.addInstruction(new Instruction(gen.getStoreInstruction(ld.type(), ld.address, false))); //Use SimpleInstruction here also? Remember for testing
+			// - END -
+
+			classFile.addComment(ld, "End LocalDecl");
+		}
+		else
+			println(ld.line + ": LocalDecl:\tVisiting local variable declaration for variable '" + ld.var().name().getname() + "'.");
+
+		return null;
+	}
+    
 	// INVOCATION (YET TO COMPLETE)
 	public Object visitInvocation(Invocation in) {
 	    println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
@@ -551,25 +636,6 @@ class GenerateCode extends Visitor {
 		// - END -
 
 		classFile.addComment(in, "End Invocation");
-		return null;
-	}
-
-	// LOCAL VARIABLE DECLARATION (YET TO COMPLETE)
-	public Object visitLocalDecl(LocalDecl ld) {
-		if (ld.var().init() != null) {
-			println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
-					ld.var().name().getname() + "'.");
-			classFile.addComment(ld, "Local Variable Declaration");
-
-			// YOUR CODE HERE
-
-			// - END -
-
-			classFile.addComment(ld, "End LocalDecl");
-		}
-		else
-			println(ld.line + ": LocalDecl:\tVisiting local variable declaration for variable '" + ld.var().name().getname() + "'.");
-
 		return null;
 	}
 
@@ -605,40 +671,6 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// RETURN STATEMENT (COMPLETE)
-	public Object visitReturnStat(ReturnStat rs) {
-		println(rs.line + ": ReturnStat:\tGenerating code.");
-		classFile.addComment(rs, "Return Statement");
-
-		// YOUR CODE HERE
-		if (rs.expr() == null) {
-			classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
-		}
-		else {
-			rs.expr().visit(this);
-			
-			if (rs.getType().isClassType() || rs.getType().isStringType() || rs.getType().isNullType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_areturn));
-			}
-			else if (rs.getType().isFloatType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_freturn));
-			}
-			else if (rs.getType().isLongType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lreturn));
-			}
-			else if (rs.getType().isDoubleType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dreturn));
-			}
-			else if (rs.getType().isIntegerType() || rs.getType().isBooleanType() || rs.getType().isByteType() || rs.getType().isCharType() || rs.getType().isShortType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ireturn));
-			}
-		}
-		// - END -
-
-		classFile.addComment(rs, "End ReturnStat");
-		return null;
-	}
-
 	// STATIC INITIALIZER (YET TO COMPLETE)
 	public Object visitStaticInitDecl(StaticInitDecl si) {
 		println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
@@ -670,26 +702,13 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// THIS (COMPLETE)
-	public Object visitThis(This th) {
-		println(th.line + ": This:\tGenerating code (access).");       
-		classFile.addComment(th, "This");
-
-		// YOUR CODE HERE
-		classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
-		// - END -
-
-		classFile.addComment(th, "End This");
-		return null;
-	}
-
 	// UNARY POST EXPRESSION (YET TO COMPLETE)
 	public Object visitUnaryPostExpr(UnaryPostExpr up) {
 		println(up.line + ": UnaryPostExpr:\tGenerating code.");
 		classFile.addComment(up, "Unary Post Expression");
 
 		// YOUR CODE HERE
-
+		
 		// - END -
 
 		classFile.addComment(up, "End UnaryPostExpr");
@@ -702,7 +721,7 @@ class GenerateCode extends Visitor {
 		classFile.addComment(up,"Unary Pre Expression");
 
 		// YOUR CODE HERE
-
+		
 		// - END -
 
 		classFile.addComment(up, "End UnaryPreExpr");
@@ -719,19 +738,6 @@ class GenerateCode extends Visitor {
 		// - END -
 
 		classFile.addComment(be, "End BinaryExpr");
-		return null;
-    }
-
-    // BREAK STATEMENT (YET TO COMPLETE)
-    public Object visitBreakStat(BreakStat br) {
-		println(br.line + ": BreakStat:\tGenerating code.");
-		classFile.addComment(br, "Break Statement");
-
-		// YOUR CODE HERE
-
-		// - END -
-
-		classFile.addComment(br, "End BreakStat");
 		return null;
     }
 
@@ -756,7 +762,6 @@ class GenerateCode extends Visitor {
 
 		// YOUR CODE HERE
 		
-
 		// - END -
 
 		classFile.addComment(ci, "End CInvocation");
@@ -801,6 +806,8 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
+	// E+ and E* functions below
+	
 	// TERNARY EXPRESSION (YET TO COMPLETE - E+)
 	public Object visitTernary(Ternary te) {
 		println(te.line + ": Ternary:\tGenerating code.");
@@ -810,7 +817,7 @@ class GenerateCode extends Visitor {
 		StringBuilderCreated = false;
 
 		// YOUR CODE HERE
-
+		
 		// - END -
 
 		classFile.addComment(te, "Ternary");
