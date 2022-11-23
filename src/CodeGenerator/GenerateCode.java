@@ -598,17 +598,42 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ne, "New");
 
 		// YOUR CODE HERE
+		
+		// - END -
 
 		classFile.addComment(ne, "End New");
 		return null;
 	}
 
-	// RETURN STATEMENT (YET TO COMPLETE)
+	// RETURN STATEMENT (COMPLETE)
 	public Object visitReturnStat(ReturnStat rs) {
 		println(rs.line + ": ReturnStat:\tGenerating code.");
 		classFile.addComment(rs, "Return Statement");
 
 		// YOUR CODE HERE
+		if (rs.expr() == null) {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
+		}
+		else {
+			rs.expr().visit(this);
+			
+			if (rs.getType().isClassType() || rs.getType().isStringType() || rs.getType().isNullType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_areturn));
+			}
+			else if (rs.getType().isFloatType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_freturn));
+			}
+			else if (rs.getType().isLongType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lreturn));
+			}
+			else if (rs.getType().isDoubleType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dreturn));
+			}
+			else if (rs.getType().isIntegerType() || rs.getType().isBooleanType() || rs.getType().isByteType() || rs.getType().isCharType() || rs.getType().isShortType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ireturn));
+			}
+		}
+		// - END -
 
 		classFile.addComment(rs, "End ReturnStat");
 		return null;
@@ -636,20 +661,22 @@ class GenerateCode extends Visitor {
 		classFile.addComment(su, "Super");
 
 		// YOUR CODE HERE
-		// Should be the same as visitThis except it loads address 0
+		// "Should be the same as visitThis except it loads address 0"
+		// Wait 'this' loads address 0, maybe super loads a different address? Might be in the book 
+		
 		// - END -
 
 		classFile.addComment(su, "End Super");
 		return null;
 	}
 
-	// THIS (YET TO COMPLETE)
+	// THIS (COMPLETE)
 	public Object visitThis(This th) {
 		println(th.line + ": This:\tGenerating code (access).");       
 		classFile.addComment(th, "This");
 
 		// YOUR CODE HERE
-
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 		// - END -
 
 		classFile.addComment(th, "End This");
