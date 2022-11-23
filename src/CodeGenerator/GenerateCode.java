@@ -829,7 +829,50 @@ class GenerateCode extends Visitor {
 		classFile.addComment(up, "Unary Post Expression");
 
 		// YOUR CODE HERE
+		up.expr().visit(this);
+		if (up.expr().type.isLongType()) {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup2));
+		} else {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
+		}
+
+		if (up.expr().type.isIntegerType()) {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1)); classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_iadd : RuntimeConstants.opc_isub));
+		} else if (up.expr().type.isLongType()) {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1)); classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_ladd : RuntimeConstants.opc_lsub));
+		} else if (up.expr().type.isFloatType()) {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1)); classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_fadd : RuntimeConstants.opc_fsub));
+		} else if (up.expr().type.isDoubleType()) {
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1)); classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_dadd : RuntimeConstants.opc_dsub));
+		}
+
+		// Now determine if its a FieldRef or a NameExpr
+		if (up.expr() instanceof FieldRef) {
+
+			FieldRef fr = (FieldRef)up.expr();
+			FieldDecl fd = fr.myDecl;
 		
+		} else if (up.expr() instanceof NameExpr) {
+		
+			// could still be a field! check what the myDecl is!
+			NameExpr ne = (NameExpr)up.expr();
+		
+			if (ne.myDecl instanceof FieldDecl) {
+		
+				FieldDecl fd = (FieldDecl)ne.myDecl;
+		
+			} else {
+		
+				int address = ((VarDecl)ne.myDecl).address();
+				println(up.line + ": UnaryPostExpr:\tGenerating code (local/param store) for var ’" + ((VarDecl)ne.myDecl).name() + "’.");
+		
+				if (address < 4){
+					classFile.addInstruction(new Instruction(gen.getStoreInstruction(((VarDecl)ne.myDecl).type(), address, false)));
+				}else{
+					classFile.addInstruction(new SimpleInstruction(gen.getStoreInstruction(((VarDecl)ne.myDecl).type(),address, false), address));
+				}
+			}
+		}
 		// - END -
 
 		classFile.addComment(up, "End UnaryPostExpr");
