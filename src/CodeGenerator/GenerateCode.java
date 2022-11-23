@@ -879,7 +879,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// UNARY PRE EXPRESSION (COMPLETED)
+	// UNARY PRE EXPRESSION (COMPLETED - NOT REFACTORED)
 	public Object visitUnaryPreExpr(UnaryPreExpr up) {
 		println(up.line + ": UnaryPreExpr:\tGenerating code for " + up.op().operator() + " : " + up.expr().type.typeName() + " -> " + up.expr().type.typeName() + ".");
 		classFile.addComment(up,"Unary Pre Expression");
