@@ -750,7 +750,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// NEW (YET TO COMPLETE)
+	// NEW (COMPLETED)
 	public Object visitNew(New ne) {
 		println(ne.line + ": New:\tGenerating code");
 		classFile.addComment(ne, "New");
