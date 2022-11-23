@@ -368,10 +368,10 @@ class GenerateCode extends Visitor {
 
 		// YOUR CODE HERE
 		if (!insideLoop) {
-			Error.error(cs, "Continue statement must be inside a loop.");
+			Error.error("Continue statement must be inside a loop.");
+		}else{
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L"+gen.getContinueLabel()));
 		}
-		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L"+gen.getContinueLabel()));
 		// - END -
 
 		classFile.addComment(cs, "End ContinueStat");
@@ -541,7 +541,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 	
-	// RETURN STATEMENT (COMPLETE)
+	// RETURN STATEMENT (COMPLETED)
 	public Object visitReturnStat(ReturnStat rs) {
 		println(rs.line + ": ReturnStat:\tGenerating code.");
 		classFile.addComment(rs, "Return Statement");
@@ -549,23 +549,18 @@ class GenerateCode extends Visitor {
 		// YOUR CODE HERE
 		if (rs.expr() == null) {
 			classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
-		}
-		else {
+		}else{
 			rs.expr().visit(this);
 			
 			if (rs.getType().isClassType() || rs.getType().isStringType() || rs.getType().isNullType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_areturn));
-			}
-			else if (rs.getType().isFloatType()) {
+			}else if (rs.getType().isFloatType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_freturn));
-			}
-			else if (rs.getType().isLongType()) {
+			}else if (rs.getType().isLongType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lreturn));
-			}
-			else if (rs.getType().isDoubleType()) {
+			}else if (rs.getType().isDoubleType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dreturn));
-			}
-			else if (rs.getType().isIntegerType() || rs.getType().isBooleanType() || rs.getType().isByteType() || rs.getType().isCharType() || rs.getType().isShortType()) {
+			}else if (rs.getType().isIntegerType() || rs.getType().isBooleanType() || rs.getType().isByteType() || rs.getType().isCharType() || rs.getType().isShortType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ireturn));
 			}
 		}
@@ -575,7 +570,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 	
-	// THIS (COMPLETE)
+	// THIS (COMPLETED)
 	public Object visitThis(This th) {
 		println(th.line + ": This:\tGenerating code (access).");       
 		classFile.addComment(th, "This");
@@ -588,24 +583,24 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-    // BREAK STATEMENT (COMPLETE)
+    // BREAK STATEMENT (COMPLETED)
     public Object visitBreakStat(BreakStat br) {
 		println(br.line + ": BreakStat:\tGenerating code.");
 		classFile.addComment(br, "Break Statement");
 
 		// YOUR CODE HERE
 		if (!insideLoop && !insideSwitch) {
-			Error.error(br, "Break statement must be inside a loop or a switch.");
+			Error.error("Break statement must be inside a loop or a switch.");
+		}else{
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, gen.getBreakLabel()));
 		}
-		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, gen.getBreakLabel()));
 		// - END -
 
 		classFile.addComment(br, "End BreakStat");
 		return null;
     }
     
-	// LOCAL VARIABLE DECLARATION (COMPLETE)
+	// LOCAL VARIABLE DECLARATION (COMPLETED)
 	public Object visitLocalDecl(LocalDecl ld) {
 		if (ld.var().init() != null) {
 			println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
