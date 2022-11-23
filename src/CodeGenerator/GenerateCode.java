@@ -634,7 +634,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// NAME EXPRESSION (YET TO COMPLETE)
+	// NAME EXPRESSION (COMPLETED)
 	public Object visitNameExpr(NameExpr ne) {
 		classFile.addComment(ne, "Name Expression --");
 
@@ -646,7 +646,30 @@ class GenerateCode extends Visitor {
 		}
 
 		// YOUR CODE HERE
+		if (!(ne.myDecl instanceof FieldDecl)) {
 
+			println(ne.line + ": NameExpr:\tGenerating code for a local var/param (access) for ’" + ne.name().getname() + "’.");
+
+			int address = ((VarDecl)ne.myDecl).address();
+			if (address >= 4){
+				classFile.addInstruction(new SimpleInstruction(gen.getLoadInstruction(ne.type, address, false), address));
+			}else{
+				classFile.addInstruction(new Instruction(gen.getLoadInstruction(ne.type, address, false)));
+			}
+
+		} else {
+
+			FieldDecl fd = (FieldDecl) ne.myDecl;
+			println(ne.line + ": NameExpr:\tGenerating code for a field reference (getfield) for field ’." + ne.name().getname() + "’ in class ’" + currentClass.name() + "’.");
+
+			if (!fd.modifiers.isStatic()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield, currentClass.name(), ne.name().getname(), ne.type.signature()));
+			} else {
+				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, currentClass.name(), ne.name().getname(), ne.type.signature()));
+			}
+
+		}
 		// - END -
 
 		classFile.addComment(ne, "End NameExpr");
