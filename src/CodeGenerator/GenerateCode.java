@@ -621,13 +621,87 @@ class GenerateCode extends Visitor {
 		return null;
 	}
     
-	// INVOCATION (YET TO COMPLETE)
+	// INVOCATION (COMPLETED)
 	public Object visitInvocation(Invocation in) {
 	    println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
 		classFile.addComment(in, "Invocation");
 		
 		// YOUR CODE HERE
+		int opCode = 0;
+		String className = "";
+		String methodName = "";
+		String signature = "";
 
+		if (in.target() != null){
+			println(in.targetType.typeName() + "’.");
+		}else{
+			println(currentClass.name() + "’.");
+		}
+
+		if (!in.targetMethod.getModifiers().isStatic()) {
+			if (in.target() != null) {
+				in.target().visit(this);
+			}else{
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+			}
+		}
+
+		if (in.params() != null) {
+			for (int i=0; i<in.params().nchildren; i++) {
+				in.params().children[i].visit(this);
+				gen.dataConvert(((Expression)in.params().children[i]).type,((ParamDecl)in.targetMethod.params().children[i]).type());
+			}
+		}
+
+		if (!(in.targetMethod.getModifiers().isStatic())) {
+
+			if (!(in.targetMethod.isInterfaceMember())) {
+				if (in.target() instanceof Super) {
+					opCode = RuntimeConstants.opc_invokenonvirtual;
+				} else {
+					opCode = RuntimeConstants.opc_invokevirtual;
+				}
+			} else {
+				opCode = RuntimeConstants.opc_invokeinterface;
+			}
+
+		} else {
+
+			opCode = RuntimeConstants.opc_invokestatic;			
+
+		}
+
+		if (in.target() != null) {
+			className = in.targetType.typeName();
+		} else {
+			className = currentClass.name();
+		}
+
+		methodName = in.methodName().getname();
+
+		signature = "(";
+		
+		if (in.params() != null) {
+			in.targetMethod.params().visit(this);
+		}
+		
+		for (int i=0; i<in.targetMethod.params().nchildren; i++){
+			signature += ((ParamDecl)in.targetMethod.params().children[i]).type().signature();
+		}
+		
+		signature += ")";
+
+		if (in.targetMethod.returnType() != null) {
+			signature += in.targetMethod.returnType().signature();
+		} else {
+			signature += "V";
+		}
+
+		if (opCode != RuntimeConstants.opc_invokeinterface){
+			classFile.addInstruction(new MethodInvocationInstruction(opCode, className, methodName, signature));
+		}else{
+			classFile.addInstruction(new InterfaceInvocationInstruction(opCode,className, methodName, signature, in.params().nchildren+1));
+		}
 		// - END -
 
 		classFile.addComment(in, "End Invocation");
