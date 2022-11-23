@@ -788,7 +788,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// STATIC INITIALIZER (YET TO COMPLETE)
+	// STATIC INITIALIZER (COMPLETED)
 	public Object visitStaticInitDecl(StaticInitDecl si) {
 		println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
 
@@ -796,7 +796,11 @@ class GenerateCode extends Visitor {
 		classFile.addComment(si, "Static Initializer");
 
 		// YOUR CODE HERE
-
+		currentClass.visit(new GenerateFieldInits(gen, currentClass, true));
+		si.initializer().visit(this);
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
+		si.setCode(classFile.getCurrentMethodCode());
+		classFile.endMethod();
 		// - END -
 
 		si.setCode(classFile.getCurrentMethodCode());
