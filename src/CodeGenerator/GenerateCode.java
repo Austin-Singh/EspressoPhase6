@@ -1161,20 +1161,6 @@ class GenerateCode extends Visitor {
 		return null;
     }
 
-    // CAST EXPRESSION (YET TO COMPLETE)
-    public Object visitCastExpr(CastExpr ce) {
-		println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
-		classFile.addComment(ce, "Cast Expression");
-		String instString;
-		
-		// YOUR CODE HERE
-
-		// - END -
-
-		classFile.addComment(ce, "End CastExpr");
-		return null;
-    }
-    
 	// CONSTRUCTOR INVOCATION (EXPLICIT) (COMPLETED - NOT REFACTORED)
 	public Object visitCInvocation(CInvocation ci) {
 		println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
@@ -1209,6 +1195,20 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
+    // CAST EXPRESSION (YET TO COMPLETE)
+    public Object visitCastExpr(CastExpr ce) {
+		println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
+		classFile.addComment(ce, "Cast Expression");
+		String instString;
+		
+		// YOUR CODE HERE
+
+		// - END -
+
+		classFile.addComment(ce, "End CastExpr");
+		return null;
+    }
+    
 	// CLASS DECLARATION (YET TO COMPLETE)
 	public Object visitClassDecl(ClassDecl cd) {
 		println(cd.line + ": ClassDecl:\tGenerating code for class '" + cd.name() + "'.");
@@ -1218,7 +1218,6 @@ class GenerateCode extends Visitor {
 		currentClass = cd;
 
 		// YOUR CODE HERE
-
 		// - END -
 
 		return null;
