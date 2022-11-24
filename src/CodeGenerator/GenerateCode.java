@@ -970,7 +970,191 @@ class GenerateCode extends Visitor {
 		classFile.addComment(be, "Binary Expression");
 			
 		// YOUR CODE HERE
-		
+		String op = be.op().operator();
+		if (op.equals("+") || op.equals("−") || op.equals("*") || op.equals("/") || op.equals("%") || op.equals("&") || op.equals("|") || op.equals("^")) {
+
+			PrimitiveType ct = PrimitiveType.ceilingType((PrimitiveType) be.left().type, (PrimitiveType) be.right().type);
+			be.left().visit(this);
+			gen.dataConvert(be.left().type, ct);
+			be.right().visit(this);
+			gen.dataConvert(be.right().type, ct);
+
+			if (ct.isIntegerType() || ct.isShortType() || ct.isCharType() || ct.isByteType() || ct.isBooleanType()) {
+				
+				if (op.equals("+"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
+				else if (op.equals("−"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
+				else if (op.equals("*"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_imul));
+				else if (op.equals("/"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_idiv));
+				else if (op.equals("%"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_irem));
+				else if (op.equals("^"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ixor));
+				else if (op.equals("|"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ior));
+				else if (op.equals("&"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iand));
+
+			} else if (ct.isLongType()) {
+
+				if (op.equals("+"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ladd));
+				else if (op.equals("−"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lsub));
+				else if (op.equals("*"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lmul));
+				else if (op.equals("/"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ldiv));
+				else if (op.equals("%"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lrem));
+				else if (op.equals("^"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lxor));
+				else if (op.equals("|"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lor));
+				else if (op.equals("&"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_land));
+
+			} else if (ct.isFloatType()) {
+
+				if (op.equals("+"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
+				else if (op.equals("−"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
+				else if (op.equals("*"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fmul));
+				else if (op.equals("/"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fdiv));
+				else if (op.equals("%"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_frem));
+
+			} else if (ct.isDoubleType()) {
+
+				if (op.equals("+"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dadd));
+				else if (op.equals("−"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dsub));
+				else if (op.equals("*"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dmul));
+				else if (op.equals("/"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ddiv));
+				else if (op.equals("%"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_drem));
+
+			}
+		} else if (op.equals("&&") || op.equals("||")) {
+			
+			String donelabel;
+			be.left().visit(this);
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
+			donelabel = gen.getLabel();
+			classFile.addInstruction(new JumpInstruction((op.equals("&&") ? RuntimeConstants.opc_ifeq : RuntimeConstants.opc_ifne), "L" + donelabel));
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
+			be.right().visit(this);
+			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + donelabel));
+
+		} else if (op.equals("==") || op.equals("!=") || op.equals("<=") || op.equals(">=") || op.equals(">") || op.equals("<")) {
+
+			String truelabel, donelabel;
+			truelabel = gen.getLabel();
+			donelabel = gen.getLabel();
+			if (be.left().type.isClassType()) {
+				be.left().visit(this);
+				be.right().visit(this);
+				if (op.equals("=="))
+					classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_acmpeq, "L" + truelabel));
+				else
+					classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_acmpne, "L" + truelabel));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_0));
+				classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L" + donelabel));
+				classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + truelabel));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+				classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + donelabel));
+			} else if (be.left().type.isStringType()) {
+				be.left().visit(this);
+				be.right().visit(this);
+				classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokevirtual, "java/lang/String", "equals", "(Ljava/lang/Object;)Z"));
+			} else {
+				PrimitiveType ct = PrimitiveType.ceilingType((PrimitiveType) be.left().type, (PrimitiveType) be.right().type);
+				be.left().visit(this);
+				gen.dataConvert(be.left().type, ct);
+				be.right().visit(this);
+				gen.dataConvert(be.right().type, ct);
+				String jumpTarget = "L" + truelabel;
+				if (ct.isIntegerType()) {
+					if (op.equals("==")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpeq, jumpTarget));
+					} else if (op.equals("!=")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpne, jumpTarget));
+					} else if (op.equals("<=")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmple, jumpTarget));
+					} else if (op.equals(">=")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpge, jumpTarget));
+					} else if (op.equals("<")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmplt, jumpTarget));
+					} else if (op.equals(">")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpgt, jumpTarget));
+					}
+				} else if (ct.isLongType() || ct.isFloatType() || ct.isDoubleType()) {
+					if (ct.isLongType())
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_lcmp));
+					else if (ct.isFloatType())
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_fcmpg));
+					else
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_dcmpg));
+					jumpTarget = "L" + truelabel;
+					if (op.equals("==")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, jumpTarget));
+					} else if (op.equals("!=")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifne, jumpTarget));
+					} else if (op.equals("<=")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifle, jumpTarget));
+					} else if (op.equals(">=")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifge, jumpTarget));
+					} else if (op.equals("<")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_iflt, jumpTarget));
+					} else if (op.equals(">")) {
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifgt, jumpTarget));
+					}
+				} else
+					Error.error("no case found for type: " + ct);
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_0));
+					classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L" + donelabel));
+					classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + truelabel));
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+					classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + donelabel));
+			}
+
+		} else if (op.equals("<<") || op.equals(">>") || op.equals(">>>")) {
+
+			be.left().visit(this);
+			be.right().visit(this);
+
+			if (be.right().type.isIntegerType()) {
+				if (op.equals("<<"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ishl));
+				else if (op.equals(">>"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ishr));
+				else if (op.equals(">>>"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iushr));
+			} else {
+				// Only Long type left, type checking made sure of that!
+				if (op.equals("<<"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lshl));
+				else if (op.equals(">>"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lshr));
+				else if (op.equals(">>>"))
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lushr));
+			}
+
+		} else if (op.equals("instanceof")) {
+
+			be.left().visit(this);
+			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_instanceof, ((NameExpr) be.right()).name().getname()));
+
+		}
 		// - END -
 
 		classFile.addComment(be, "End BinaryExpr");
