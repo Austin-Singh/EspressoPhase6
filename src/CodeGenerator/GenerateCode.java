@@ -1168,20 +1168,41 @@ class GenerateCode extends Visitor {
 		String instString;
 		
 		// YOUR CODE HERE
-		
+
 		// - END -
 
 		classFile.addComment(ce, "End CastExpr");
 		return null;
     }
     
-	// CONSTRUCTOR INVOCATION (EXPLICIT) (YET TO COMPLETE)
+	// CONSTRUCTOR INVOCATION (EXPLICIT) (COMPLETED - NOT REFACTORED)
 	public Object visitCInvocation(CInvocation ci) {
 		println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
 		classFile.addComment(ci, "Explicit Constructor Invocation");
 
 		// YOUR CODE HERE
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+
+		if (ci.args() != null)
+			ci.args().visit(this);
+
+		String className;
 		
+		if (ci.superConstructorCall())
+			className = currentClass.superClass().typeName() + "/<init>(";
+		else
+			className = currentClass.name() + "/<init>(";
+		
+		String signature = "(";
+		if (ci.args() != null) {
+			ci.constructor.params().visit(this);
+		}
+
+		for (int i=0; i< ci.constructor.params().nchildren; i++)
+			signature += ((ParamDecl)ci.constructor.params().children[i]).type().signature();
+		
+		signature += ")";
+		classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, className,"<init>",signature));
 		// - END -
 
 		classFile.addComment(ci, "End CInvocation");
