@@ -964,7 +964,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-	// BINARY EXPRESSION (YET TO COMPLETE)
+	// BINARY EXPRESSION (COMPLETED - NOT REFACTORED)
     public Object visitBinaryExpr(BinaryExpr be) {
 		println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
 		classFile.addComment(be, "Binary Expression");
