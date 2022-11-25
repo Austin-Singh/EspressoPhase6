@@ -1195,21 +1195,21 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-    // CAST EXPRESSION (YET TO COMPLETE)
+    // CAST EXPRESSION (YET TO COMPLETE -- FINISH THIS IN TESTING)
     public Object visitCastExpr(CastExpr ce) {
 		println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
 		classFile.addComment(ce, "Cast Expression");
 		String instString;
 		
 		// YOUR CODE HERE
-
+		ce.expr().visit(this);
 		// - END -
 
 		classFile.addComment(ce, "End CastExpr");
 		return null;
     }
     
-	// CLASS DECLARATION (YET TO COMPLETE)
+	// CLASS DECLARATION ("COMPLETE" -- UNSURE HOW TO REFACTOR THIS)
 	public Object visitClassDecl(ClassDecl cd) {
 		println(cd.line + ": ClassDecl:\tGenerating code for class '" + cd.name() + "'.");
 
@@ -1218,12 +1218,51 @@ class GenerateCode extends Visitor {
 		currentClass = cd;
 
 		// YOUR CODE HERE
+		boolean needClinit = false;
+		StaticInitDecl si = null;
+		
+		for (int i = 0; i < cd.body().nchildren; i++) {
+			if (cd.body().children[i] instanceof FieldDecl) {
+				cd.body().children[i].visit(this);
+			}
+		}
+		
+		if (cd.methodTable.get("<clinit>") == null) {
+			FieldDecl fd;
+			
+			for (Enumeration en = cd.fieldTable.entries.elements(); en.hasMoreElements(); ) {
+				fd = (FieldDecl)en.nextElement();
+				if (fd.modifiers.isStatic() && fd.var().init() != null) {
+					needClinit = true;
+				}
+			}
+			
+			if (needClinit) {
+				si = new StaticInitDecl(new Block(new Sequence()));
+				
+				classFile.startMethod(si);
+				cd.visit(new GenerateFieldInits(gen, currentClass, true));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
+				si.setCode(classFile.getCurrentMethodCode());
+				classFile.endMethod();
+			}
+		}
+		
+		for (int i = 0; i < cd.body().nchildren; i++) {
+			if (!(cd.body().children[i] instanceof FieldDecl)) {
+				cd.body().children[i].visit(this);
+			}
+		}
+		
+		if (needClinit) {
+			cd.body().append(si);
+		}
 		// - END -
 
 		return null;
 	}
 
-	// CONSTRUCTOR DECLARATION (YET TO COMPLETE)
+	// CONSTRUCTOR DECLARATION ("COMPLETE")
 	public Object visitConstructorDecl(ConstructorDecl cd) {
 		println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
 
@@ -1234,7 +1273,24 @@ class GenerateCode extends Visitor {
 		cd.cinvocation().visit(this);
 
 		// YOUR CODE HERE
-
+		gen.setAddress(1);
+		
+		if (cd.cinvocation() == null) {
+			if (currentClass.superClass() == null) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+				classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, "java/lang/Object", "<init>", "0V"));
+			}
+			else {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+				classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, currentClass.superClass().name().getname(), "<init>", "0V"));
+			}
+		}
+		
+		currentClass.visit(new GenerateFieldInits(gen, currentClass, false));
+		
+		if (cd.body() != null) {
+			cd.body().visit(this);
+		}
 		// - END -
 
 		classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
