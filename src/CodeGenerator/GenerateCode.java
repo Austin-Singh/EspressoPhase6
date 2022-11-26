@@ -1286,7 +1286,9 @@ class GenerateCode extends Visitor {
 			}
 		}
 		
+		classFile.addComment(cd, "Field Init Generation Start");
 		currentClass.visit(new GenerateFieldInits(gen, currentClass, false));
+		classFile.addComment(cd, "Field Init Generation End");
 		
 		if (cd.body() != null) {
 			cd.body().visit(this);
