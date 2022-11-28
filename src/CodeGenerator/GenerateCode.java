@@ -525,16 +525,19 @@ class GenerateCode extends Visitor {
 		
 		if (is.thenpart() != null) {
 			is.thenpart().visit(this);
-			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, endLabel));
+			if(is.elsepart() != null) {
+				classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, endLabel));
+			}
 		}
 		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
-		
-		if (is.elsepart() != null) {
+		if(is.elsepart() != null) {
+			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
 			is.elsepart().visit(this);
+			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
 		}
-		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		else {
+			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
+		}
 		// - END -
 		
 		classFile.addComment(is,  "End IfStat");
