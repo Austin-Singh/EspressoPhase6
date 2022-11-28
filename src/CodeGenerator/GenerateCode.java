@@ -1175,20 +1175,19 @@ class GenerateCode extends Visitor {
 		String className;
 		
 		if (ci.superConstructorCall())
-			className = currentClass.superClass().typeName() + "/<init>(";
+			className = currentClass.superClass().typeName();
 		else
-			className = currentClass.name() + "/<init>(";
+			className = currentClass.name();
 		
 		String signature = "(";
 		if (ci.args() != null) {
 			ci.constructor.params().visit(this);
 		}
-
-		for (int i=0; i< ci.constructor.params().nchildren; i++)
-			signature += ((ParamDecl)ci.constructor.params().children[i]).type().signature();
 		
-		signature += ")";
-		classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, className,"<init>",signature));
+		signature += ci.constructor.paramSignature();
+		
+		signature += ")V";
+		classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial, className,"<init>",signature));
 		// - END -
 
 		classFile.addComment(ci, "End CInvocation");
