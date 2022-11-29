@@ -370,7 +370,7 @@ class GenerateCode extends Visitor {
 		if (!insideLoop) {
 			Error.error("Continue statement must be inside a loop.");
 		}else{
-			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, "L"+gen.getContinueLabel()));
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, gen.getContinueLabel()));
 		}
 		// - END -
 
@@ -516,12 +516,20 @@ class GenerateCode extends Visitor {
 		classFile.addComment(is, "If Statement");
 
 		// YOUR CODE HERE
-		String elseLabel = "L"+gen.getLabel();
+		String elseLabel = "L";
+		if (is.elsepart() != null) {
+			elseLabel += gen.getLabel();
+		}
 		String endLabel = "L"+gen.getLabel();
 		
 		is.expr().visit(this);
 		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, elseLabel));
+		if (is.elsepart() != null) {
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, elseLabel));
+		}
+		else {
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+		}
 		
 		if (is.thenpart() != null) {
 			is.thenpart().visit(this);
@@ -536,7 +544,7 @@ class GenerateCode extends Visitor {
 			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
 		}
 		else {
-			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
+			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
 		}
 		// - END -
 		
