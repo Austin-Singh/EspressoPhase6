@@ -1,7 +1,13 @@
 public class Vince {
 
-	int localParamInt;
-	boolean localParamBool;
+	int localParamInt = 1;
+	int localParamInt1 = 1;
+	int localParamInt2 = 1;
+	int localParamInt3 = 1;
+	boolean localParamBool = true;
+	boolean localParamBool1 = true;
+	boolean localParamBool2 = true;
+	boolean localParamBool3 = true;
 
 	Vince(){
 
@@ -28,11 +34,14 @@ public class Vince {
 	}
 
 	public void testMultipleLocalParams(){
-		boolean t1 = false; // no error 
-		boolean t2 = false; // no error
-		boolean t3 = false; // no error
+		boolean t1 = false; // MATCH 
+		boolean t2 = false; // MATCH
+		boolean t3 = false; // MATCH
 		boolean t4 = false; // DIFF | our: istore | ref: istore 4
 		boolean t5 = false; // DIFF | our: istore | ref: istore 5
+
+		// Seemingly we are declaring local stack variables incorrectly
+
 	}
 
 	public static void main(String args[]) {

@@ -12,7 +12,7 @@ else
         cat our.txt
         printf "$(tput setaf 2)MATCHING$(tput sgr0)\n"
 fi
-#rm our.txt
-#rm ref.txt
-#rm diff.txt
+rm our.txt
+rm ref.txt
+rm diff.txt
 ant clean > /dev/null
