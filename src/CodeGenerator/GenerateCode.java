@@ -786,7 +786,6 @@ class GenerateCode extends Visitor {
 
 			for (int i=0; i<ne.getConstructorDecl().params().nchildren; i++){
 				signature += ((ParamDecl)ne.getConstructorDecl().params().children[i]).type().signature();
-				signature += ")V";
 			}
 
 			signature += ")V";

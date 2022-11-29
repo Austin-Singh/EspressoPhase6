@@ -17,7 +17,9 @@ public class Vince {
 
 			boolean var3 = true;
 			if(var3){
+				if(var3){
 
+				}
 			}
 
 		}
@@ -45,8 +47,9 @@ public class Vince {
 		Vince t;
 		Vince t1 = new Vince();
 		Vince t2 = new Vince(420);
-		int var6 = 1;
-		Test t3 = new Test(var6);
+
+		double var6 = 8;
+		//Vince t3 = new Vince(var6);
 
 		return t;
 	}

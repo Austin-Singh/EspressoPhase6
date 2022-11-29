@@ -1,0 +1,4 @@
+150c150
+< 	dstore
+---
+> 	dstore 4
