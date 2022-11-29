@@ -18,7 +18,7 @@ public class Vince {
 		Vince t;
 		Vince t1 = new Vince();
 		Vince t2 = new Vince(420);
-		double var6 = 8; // ERROR/DIFF NOTE: istore 4 vs istore 
+		//double var6 = 8; // ERROR/DIFF NOTE: istore 4 vs istore 
 		//Vince t3 = new Vince(var6);
 		return t;
 	}
@@ -30,7 +30,7 @@ public class Vince {
 		if (var1) {
 			boolean var2 = true;
 			if(var2){
-				if(var3){
+				if(var2){
 
 				}
 			}
@@ -43,7 +43,9 @@ public class Vince {
 			}
 		}
 
-		while(var1){break;}
+		while(var1){
+			break;
+		}
 
 	}
 }
