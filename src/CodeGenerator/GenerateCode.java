@@ -789,7 +789,8 @@ class GenerateCode extends Visitor {
 				signature += ")V";
 			}
 
-			classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, ne.type().typeName(), "<init>", signature));
+			signature += ")V";
+			classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial, ne.type().typeName(), "<init>", signature));
 		} else {
 			signature = "()V";
 		}
@@ -1288,11 +1289,11 @@ class GenerateCode extends Visitor {
 		if (cd.cinvocation() == null) {
 			if (currentClass.superClass() == null) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
-				classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, "java/lang/Object", "<init>", "0V"));
+				classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial, "java/lang/Object", "<init>", "0V"));
 			}
 			else {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
-				classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokenonvirtual, currentClass.superClass().name().getname(), "<init>", "0V"));
+				classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial, currentClass.superClass().name().getname(), "<init>", "0V"));
 			}
 		}
 		
