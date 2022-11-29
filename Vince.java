@@ -1,26 +1,38 @@
 public class Vince {
 
-	int localParam;
+	int localParamInt;
+	boolean localParamBool;
 
 	Vince(){
 
 	}
 
-	Vince(int localParam){
-		this.localParam = localParam;
+	Vince(boolean localParamBool){
+		this.localParamBool = localParamBool;
 	}
 
-	public int visitReturn(int var4){
-		return var4;
+	Vince(int localParamInt){
+		this.localParamInt = localParamInt;
+	}
+
+
+	public boolean visitReturn(boolean localParamBool){
+		return this.localParamBool;
 	}
 
 	public Vince visitNew(){
 		Vince t;
 		Vince t1 = new Vince();
 		Vince t2 = new Vince(420);
-		//double var6 = 8; // ERROR/DIFF NOTE: istore 4 vs istore 
-		//Vince t3 = new Vince(var6);
 		return t;
+	}
+
+	public void testMultipleLocalParams(){
+		boolean t1 = false; // no error 
+		boolean t2 = false; // no error
+		boolean t3 = false; // no error
+		boolean t4 = false; // DIFF | our: istore | ref: istore 4
+		boolean t5 = false; // DIFF | our: istore | ref: istore 5
 	}
 
 	public static void main(String args[]) {
@@ -28,16 +40,14 @@ public class Vince {
 		boolean var1 = true;
 
 		if (var1) {
-			boolean var2 = true;
-			if(var2){
-				if(var2){
+			if(var1){
+				if(var1){
 
 				}
 			}
 		}else{
-			boolean var3 = true;
-			if(var3){
-				if(var3){
+			if(var1){
+				if(var1){
 
 				}
 			}

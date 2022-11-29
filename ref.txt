@@ -1,0 +1,97 @@
+---------------------------------------------------------
+Generating code for: Vince
+
+** Assigning Addresses:
+6: ConstructorDecl:	Resetting address counter for constructor 'Vince'.
+6: End ConstructorDecl
+10: ConstructorDecl:	Resetting address counter for constructor 'Vince'.
+10: ParamDecl:	Assigning address:  1 to parameter 'localParamBool'.
+10: End ConstructorDecl
+14: ConstructorDecl:	Resetting address counter for constructor 'Vince'.
+14: ParamDecl:	Assigning address:  1 to parameter 'localParamInt'.
+14: End ConstructorDecl
+19: MethodDecl:	Resetting address counter for method 'visitReturn'.
+19: ParamDecl:	Assigning address:  1 to parameter 'localParamBool'.
+19: End MethodDecl
+23: MethodDecl:	Resetting address counter for method 'visitNew'.
+24: LocalDecl:	Assigning address:  1 to local variable 't'.
+25: LocalDecl:	Assigning address:  2 to local variable 't1'.
+26: LocalDecl:	Assigning address:  3 to local variable 't2'.
+23: End MethodDecl
+30: MethodDecl:	Resetting address counter for method 'testMultipleLocalParams'.
+31: LocalDecl:	Assigning address:  1 to local variable 't1'.
+32: LocalDecl:	Assigning address:  2 to local variable 't2'.
+33: LocalDecl:	Assigning address:  3 to local variable 't3'.
+34: LocalDecl:	Assigning address:  4 to local variable 't4'.
+35: LocalDecl:	Assigning address:  5 to local variable 't5'.
+30: End MethodDecl
+38: MethodDecl:	Resetting address counter for method 'main'.
+38: ParamDecl:	Assigning address:  0 to parameter 'args'.
+40: LocalDecl:	Assigning address:  1 to local variable 'var1'.
+38: End MethodDecl
+
+** Generating Bytecode Instructions:
+1: ClassDecl:	Generating code for class 'Vince'.
+3: FieldDecl:	Generating code.
+4: FieldDecl:	Generating code.
+6: ConstructorDecl: Generating Code for constructor for class Vince
+0: CInvocation:	Generating code for Explicit Constructor Invocation.
+10: ConstructorDecl: Generating Code for constructor for class Vince
+0: CInvocation:	Generating code for Explicit Constructor Invocation.
+11: ExprStat:	Visiting an Expression Statement.
+11: Assignment:	Generating code for an Assignment.
+11: Generating reference for FieldRef target 
+11: This:	Generating code (access).
+11: NameExpr:	Generating code for a local var/param (access) for 'localParamBool'.
+14: ConstructorDecl: Generating Code for constructor for class Vince
+0: CInvocation:	Generating code for Explicit Constructor Invocation.
+15: ExprStat:	Visiting an Expression Statement.
+15: Assignment:	Generating code for an Assignment.
+15: Generating reference for FieldRef target 
+15: This:	Generating code (access).
+15: NameExpr:	Generating code for a local var/param (access) for 'localParamInt'.
+19: MethodDecl:	Generating code for method 'visitReturn'.
+20: ReturnStat:	Generating code.
+20: FieldRef:	Generating code (getfield code only!).
+20: This:	Generating code (access).
+23: MethodDecl:	Generating code for method 'visitNew'.
+24: LocalDecl:	Visiting local variable declaration for variable 't'.
+25: LocalDecl:	Generating code for the initializer for variable 't1'.
+25: New:	Generating code
+26: LocalDecl:	Generating code for the initializer for variable 't2'.
+26: New:	Generating code
+26: Literal:	Generating code for Literal '420'.
+27: ReturnStat:	Generating code.
+27: NameExpr:	Generating code for a local var/param (access) for 't'.
+30: MethodDecl:	Generating code for method 'testMultipleLocalParams'.
+31: LocalDecl:	Generating code for the initializer for variable 't1'.
+31: Literal:	Generating code for Literal 'false'.
+32: LocalDecl:	Generating code for the initializer for variable 't2'.
+32: Literal:	Generating code for Literal 'false'.
+33: LocalDecl:	Generating code for the initializer for variable 't3'.
+33: Literal:	Generating code for Literal 'false'.
+34: LocalDecl:	Generating code for the initializer for variable 't4'.
+34: Literal:	Generating code for Literal 'false'.
+35: LocalDecl:	Generating code for the initializer for variable 't5'.
+35: Literal:	Generating code for Literal 'false'.
+38: MethodDecl:	Generating code for method 'main'.
+40: LocalDecl:	Generating code for the initializer for variable 'var1'.
+40: Literal:	Generating code for Literal 'true'.
+42: IfStat:	Generating code.
+42: NameExpr:	Generating code for a local var/param (access) for 'var1'.
+43: IfStat:	Generating code.
+43: NameExpr:	Generating code for a local var/param (access) for 'var1'.
+44: IfStat:	Generating code.
+44: NameExpr:	Generating code for a local var/param (access) for 'var1'.
+49: IfStat:	Generating code.
+49: NameExpr:	Generating code for a local var/param (access) for 'var1'.
+50: IfStat:	Generating code.
+50: NameExpr:	Generating code for a local var/param (access) for 'var1'.
+56: While Stat:	Generating Code.
+56: NameExpr:	Generating code for a local var/param (access) for 'var1'.
+57: BreakStat:	Generating code.
+Not generating code for 'java/lang/Object'
+---------------------------------------------------------
+Writing Unoptimized jasmin file : 'Vince.rj'
+Generating code for the EVM? false
+============= S = U = C = C = E = S = S =================

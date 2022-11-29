@@ -1,159 +1,213 @@
 .class public Vince
 .super java/lang/Object
 
-.field public localParam I
+.field public localParamInt I
+
+.field public localParamBool Z
 
 .method public <init>()V
 	.limit stack 50
 	.limit locals 1
-;  (5) Constructor Declaration
+;  (6) Constructor Declaration
 ;  (0) Explicit Constructor Invocation
 	aload_0
 	invokespecial java/lang/Object/<init>()V
 ;  (0) End CInvocation
-;  (5) Field Init Generation Start
-;  (5) Field Init Generation End
+;  (6) Field Init Generation Start
+;  (6) Field Init Generation End
+	return
+.end method
+
+.method public <init>(Z)V
+	.limit stack 50
+	.limit locals 2
+;  (10) Constructor Declaration
+;  (0) Explicit Constructor Invocation
+	aload_0
+	invokespecial java/lang/Object/<init>()V
+;  (0) End CInvocation
+;  (10) Field Init Generation Start
+;  (10) Field Init Generation End
+;  (11) Expression Statement
+;  (11) Assignment
+;  (11) This
+	aload_0
+;  (11) End This
+;  (11) Name Expression --
+	iload_1
+;  (11) End NameExpr
+	putfield Vince/localParamBool Z
+;  (11) End Assignment
+;  (11) End ExprStat
 	return
 .end method
 
 .method public <init>(I)V
 	.limit stack 50
 	.limit locals 2
-;  (9) Constructor Declaration
+;  (14) Constructor Declaration
 ;  (0) Explicit Constructor Invocation
 	aload_0
 	invokespecial java/lang/Object/<init>()V
 ;  (0) End CInvocation
-;  (9) Field Init Generation Start
-;  (9) Field Init Generation End
-;  (10) Expression Statement
-;  (10) Assignment
-;  (10) This
+;  (14) Field Init Generation Start
+;  (14) Field Init Generation End
+;  (15) Expression Statement
+;  (15) Assignment
+;  (15) This
 	aload_0
-;  (10) End This
-;  (10) Name Expression --
+;  (15) End This
+;  (15) Name Expression --
 	iload_1
-;  (10) End NameExpr
-	putfield Vince/localParam I
-;  (10) End Assignment
-;  (10) End ExprStat
+;  (15) End NameExpr
+	putfield Vince/localParamInt I
+;  (15) End Assignment
+;  (15) End ExprStat
 	return
 .end method
 
-.method public visitReturn(I)I
+.method public visitReturn(Z)Z
 	.limit stack 50
 	.limit locals 2
-;  (13) Method Declaration (visitReturn)
-;  (14) Return Statement
-;  (14) Name Expression --
-	iload_1
-;  (14) End NameExpr
+;  (19) Method Declaration (visitReturn)
+;  (20) Return Statement
+;  (20) Field Reference
+;  (20) This
+	aload_0
+;  (20) End This
+	getfield Vince/localParamBool Z
+;  (20) End FieldRef
 	ireturn
-;  (14) End ReturnStat
+;  (20) End ReturnStat
 .end method
 
 .method public visitNew()LVince;
 	.limit stack 50
 	.limit locals 4
-;  (17) Method Declaration (visitNew)
-;  (19) Local Variable Declaration
-;  (19) New
+;  (23) Method Declaration (visitNew)
+;  (25) Local Variable Declaration
+;  (25) New
 	new Vince
 	dup
 	invokespecial Vince/<init>()V
-;  (19) End New
+;  (25) End New
 	astore_2
-;  (19) End LocalDecl
-;  (20) Local Variable Declaration
-;  (20) New
+;  (25) End LocalDecl
+;  (26) Local Variable Declaration
+;  (26) New
 	new Vince
 	dup
-;  (20) Literal
+;  (26) Literal
 	sipush 420
-;  (20) End Literal
+;  (26) End Literal
 	invokespecial Vince/<init>(I)V
-;  (20) End New
+;  (26) End New
 	astore_3
-;  (20) End LocalDecl
-;  (23) Return Statement
-;  (23) Name Expression --
+;  (26) End LocalDecl
+;  (27) Return Statement
+;  (27) Name Expression --
 	aload_1
-;  (23) End NameExpr
+;  (27) End NameExpr
 	areturn
-;  (23) End ReturnStat
+;  (27) End ReturnStat
+.end method
+
+.method public testMultipleLocalParams()V
+	.limit stack 50
+	.limit locals 6
+;  (30) Method Declaration (testMultipleLocalParams)
+;  (31) Local Variable Declaration
+;  (31) Literal
+	iconst_0
+;  (31) End Literal
+	istore_1
+;  (31) End LocalDecl
+;  (32) Local Variable Declaration
+;  (32) Literal
+	iconst_0
+;  (32) End Literal
+	istore_2
+;  (32) End LocalDecl
+;  (33) Local Variable Declaration
+;  (33) Literal
+	iconst_0
+;  (33) End Literal
+	istore_3
+;  (33) End LocalDecl
+;  (34) Local Variable Declaration
+;  (34) Literal
+	iconst_0
+;  (34) End Literal
+	istore 4
+;  (34) End LocalDecl
+;  (35) Local Variable Declaration
+;  (35) Literal
+	iconst_0
+;  (35) End Literal
+	istore 5
+;  (35) End LocalDecl
+	return
 .end method
 
 .method public static main([Ljava/lang/String;)V
 	.limit stack 50
-	.limit locals 3
-;  (26) Method Declaration (main)
-;  (28) Local Variable Declaration
-;  (28) Literal
+	.limit locals 2
+;  (38) Method Declaration (main)
+;  (40) Local Variable Declaration
+;  (40) Literal
 	iconst_1
-;  (28) End Literal
+;  (40) End Literal
 	istore_1
-;  (28) End LocalDecl
-;  (30) If Statement
-;  (30) Name Expression --
+;  (40) End LocalDecl
+;  (42) If Statement
+;  (42) Name Expression --
 	iload_1
-;  (30) End NameExpr
+;  (42) End NameExpr
 	ifeq L1
-;  (31) Local Variable Declaration
-;  (31) Literal
-	iconst_1
-;  (31) End Literal
-	istore_2
-;  (31) End LocalDecl
-;  (32) If Statement
-;  (32) Name Expression --
-	iload_2
-;  (32) End NameExpr
+;  (43) If Statement
+;  (43) Name Expression --
+	iload_1
+;  (43) End NameExpr
 	ifeq L3
-;  (33) If Statement
-;  (33) Name Expression --
-	iload_2
-;  (33) End NameExpr
+;  (44) If Statement
+;  (44) Name Expression --
+	iload_1
+;  (44) End NameExpr
 	ifeq L4
 L4:
-;  (33) End IfStat
+;  (44) End IfStat
 L3:
-;  (32) End IfStat
+;  (43) End IfStat
 	goto L2
 L1:
-;  (38) Local Variable Declaration
-;  (38) Literal
-	iconst_1
-;  (38) End Literal
-	istore_2
-;  (38) End LocalDecl
-;  (39) If Statement
-;  (39) Name Expression --
-	iload_2
-;  (39) End NameExpr
+;  (49) If Statement
+;  (49) Name Expression --
+	iload_1
+;  (49) End NameExpr
 	ifeq L5
-;  (40) If Statement
-;  (40) Name Expression --
-	iload_2
-;  (40) End NameExpr
+;  (50) If Statement
+;  (50) Name Expression --
+	iload_1
+;  (50) End NameExpr
 	ifeq L6
 L6:
-;  (40) End IfStat
+;  (50) End IfStat
 L5:
-;  (39) End IfStat
+;  (49) End IfStat
 L2:
-;  (30) End IfStat
-;  (46) While Statement
+;  (42) End IfStat
+;  (56) While Statement
 L7:
-;  (46) Name Expression --
+;  (56) Name Expression --
 	iload_1
-;  (46) End NameExpr
+;  (56) End NameExpr
 	ifeq L8
-;  (47) Break Statement
+;  (57) Break Statement
 	goto L8
-;  (47) End BreakStat
+;  (57) End BreakStat
 	goto L7
 L8:
-;  (46) End WhileStat
+;  (56) End WhileStat
 	return
 .end method
 
