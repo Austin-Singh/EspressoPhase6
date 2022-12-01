@@ -1,18 +1,17 @@
 /**
-	Functions to check:
-	[1] visitLocalDecl() 		// "over 3 error" | the missing number for "istore" command
+	Possibly(?) correct:
+	[1] visitLocalDecl() 		// missing number for "istore" command
+	[4] visitForStat()			// missing (unsued) label
+	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)
+
+	Need to change:
 	[2] visitUnaryPostExpr()	// wrong
 	[3] visitUnaryPreExpr()		// wrong
-	[4] visitForStat()			// extra/missing label - messaged Ben about this one
-	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)
 	
-	
- */
-
-/**
 	"COMPLETED" List:
 	[6] visitBinaryExpr()		// subtraction broken
 	[7] visitCastExpr()			// wrong
+	
  */
 
 class VinceSuper { // visitClassDecl
