@@ -88,7 +88,8 @@ public class Vince extends VinceSuper { // visitClassDecl
 
 	// NOT MATCHING
 	public void visitLocalDecl(){
-		int localDecl1 = 0;
+		byte localDecl1 = 0;
+		//int localDecl1 = 0;
 		int localDecl2 = 0;
 		int localDecl3 = 0;
 		//int localDecl4 = 0; // DIFF | OUR: istore 4 | REF: istore (SimpleInstrction related?)
@@ -120,8 +121,47 @@ public class Vince extends VinceSuper { // visitClassDecl
 	}
 
 	// NOT MATCHING
-	public int visitUnaryPostExpr(int x){
-		//return visitUnaryPostExpr(x++);
+	public int visitUnaryPostExprInt(int x){
+		//return visitUnaryPostExprInt(x++);
+
+		/**
+
+			I think these outputs might be logically equivalent. I think "iinc 1 1" does the exact same thing as our four lines.
+
+			REF:
+				iinc 1 1
+			OUR:
+				dup
+				iconst_1
+				iadd
+				istore_1
+		 */
+
+	}
+
+	// NOT MATCHING
+	public int visitUnaryPost(int x){
+		//return visitUnaryPost(x++); // this one might be logically identical
+	}
+
+	// NOT MATCHING
+	public double visitUnaryPost(double x){
+		//return visitUnaryPost(x++);
+	}
+
+	// NOT MATCHING
+	public byte visitUnaryPost(byte x){
+		//return visitUnaryPost(x++);
+	}
+
+	public long visitUnaryPost(long x){
+		return visitUnaryPost(x++);
+		// when using post op on a long, the output matches
+	}
+
+	public float visitUnaryPost(float x){
+		return visitUnaryPost(x++);
+		// when using post op on a float, the output matches
 	}
 
 	// NOT MATCHING
