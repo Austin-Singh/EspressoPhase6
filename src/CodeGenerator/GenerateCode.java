@@ -621,7 +621,12 @@ class GenerateCode extends Visitor {
 			// YOUR CODE HERE
 			ld.var().init().visit(this);
 			gen.dataConvert(ld.var().init().type, ld.type());
-			classFile.addInstruction(new Instruction(gen.getStoreInstruction(ld.type(), ld.address, false))); //Use SimpleInstruction here also? Remember for testing
+			if (ld.address < 4) {
+				classFile.addInstruction(new Instruction(gen.getStoreInstruction(ld.type(), ld.address, false)));
+			}
+			else {
+				classFile.addInstruction(new SimpleInstruction(gen.getStoreInstruction(ld.type(), ld.address, false), ld.address));
+			}
 			// - END -
 
 			classFile.addComment(ld, "End LocalDecl");
@@ -807,7 +812,9 @@ class GenerateCode extends Visitor {
 		classFile.addComment(si, "Static Initializer");
 
 		// YOUR CODE HERE
+		classFile.addComment(si, "Field Init Generation Start");
 		currentClass.visit(new GenerateFieldInits(gen, currentClass, true));
+		classFile.addComment(si, "Field Init Generation End");
 		si.initializer().visit(this);
 		classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 		si.setCode(classFile.getCurrentMethodCode());
@@ -1205,7 +1212,7 @@ class GenerateCode extends Visitor {
 		return null;
 	}
 
-    // CAST EXPRESSION (YET TO COMPLETE -- FINISH THIS IN TESTING)
+    // CAST EXPRESSION (COMPLETE)
     public Object visitCastExpr(CastExpr ce) {
 		println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
 		classFile.addComment(ce, "Cast Expression");
@@ -1213,6 +1220,105 @@ class GenerateCode extends Visitor {
 		
 		// YOUR CODE HERE
 		ce.expr().visit(this);
+		
+		Type castType = ce.type();
+		Type exprType = ce.expr().type;
+		
+		if (exprType.isIntegerType()) {
+			if (castType.isDoubleType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2d));
+			}
+			if (castType.isFloatType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2f));
+			}
+			if (castType.isLongType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2l));
+			}
+			if (castType.isByteType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2b));
+			}
+			if (castType.isCharType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2c));
+			}
+			if (castType.isShortType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2s));
+			}
+		}
+		else if (exprType.isDoubleType()) {
+			if (castType.isIntegerType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_d2i));
+			}
+			if (castType.isFloatType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_d2f));
+			}
+			if (castType.isLongType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_d2l));
+			}
+			if (castType.isByteType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_d2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2b));
+			}
+			if (castType.isCharType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_d2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2c));
+			}
+			if (castType.isShortType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_d2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2s));
+			}
+		}
+		else if (exprType.isFloatType()) {
+			if (castType.isIntegerType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_f2i));
+			}
+			if (castType.isDoubleType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_f2d));
+			}
+			if (castType.isLongType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_f2l));
+			}
+			if (castType.isByteType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_f2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2b));
+			}
+			if (castType.isCharType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_f2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2c));
+			}
+			if (castType.isShortType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_f2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2s));
+			}
+		}
+		else if (exprType.isLongType()) {
+			if (castType.isIntegerType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_l2i));
+			}
+			if (castType.isDoubleType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_l2d));
+			}
+			if (castType.isFloatType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_l2f));
+			}
+			if (castType.isByteType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_l2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2b));
+			}
+			if (castType.isCharType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_l2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2c));
+			}
+			if (castType.isShortType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_l2i));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2s));
+			}
+		}
+		else if (castType.getTypePrefix().equals(exprType.getTypePrefix())) {
+			return null;
+		}
+		else if (Type.isSuper((ClassType)exprType, (ClassType)castType)) {
+			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, ((ClassType)castType).typeName()));
+		}
 		// - END -
 
 		classFile.addComment(ce, "End CastExpr");
