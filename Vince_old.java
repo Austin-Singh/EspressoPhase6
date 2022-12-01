@@ -1,4 +1,4 @@
-public class Vince {
+public class Vince_old {
 
 /**
 	Functions to check:
@@ -13,27 +13,27 @@ public class Vince {
 	double fieldDouble = 0;
 	long fieldLong = 0;
 
-	Vince(){
+	Vince_old(){
 
 	}
 
-	Vince(int fieldInt){
+	Vince_old(int fieldInt){
 		this.fieldInt = fieldInt;
 	}
 
-	Vince(boolean fieldBool){
+	Vince_old(boolean fieldBool){
 		this.fieldBool = fieldBool;
 	}
 
-	Vince(float fieldFloat){
+	Vince_old(float fieldFloat){
 		this.fieldFloat = fieldFloat;
 	}
 
-	Vince(double fieldDouble){
+	Vince_old(double fieldDouble){
 		this.fieldDouble = fieldDouble;
 	}
 
-	Vince(long fieldLong){
+	Vince_old(long fieldLong){
 		this.fieldLong = fieldLong;
 	}
 
@@ -87,11 +87,11 @@ public class Vince {
 		}
 	}
 
-	public Vince visitNew(){
-		Vince t;
-		Vince t1 = new Vince();
-		Vince t2 = new Vince(420);
-		//Vince t3 = new Vince(4.20); // DIFF | our: astore | ref: astore 4
+	public Vince_old visitNew(){
+		Vince_old t;
+		Vince_old t1 = new Vince_old();
+		Vince_old t2 = new Vince_old(420);
+		//Vince_old t3 = new Vince_old(4.20); // DIFF | our: astore | ref: astore 4
 		return t;
 	}
 

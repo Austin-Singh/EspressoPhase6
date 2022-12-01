@@ -80,8 +80,12 @@ public class Vince extends VinceSuper { // visitClassDecl
 		while(true){break;}
 	}
 
+	// PARTIALY NOT MATCHING
 	public void visitLocalDecl(){
-		int localDecl = 0;
+		int localDecl1 = 0;
+		int localDecl2 = 0;
+		int localDecl3 = 0;
+		//int localDecl4 = 0; // DIFF | OUR: istore 4 | REF: istore (SimpleInstrction related?)
 	}
 
 	public void visitInvocation(){
@@ -100,6 +104,7 @@ public class Vince extends VinceSuper { // visitClassDecl
 		Vince c = new Vince();
 	}
 
+	// NOT MATCHING / WRONG ORDER
 	public static int visitStaticInitDecl(){
 		Vince v = new Vince();
 		v.staticFieldInt = 1;
@@ -123,13 +128,22 @@ public class Vince extends VinceSuper { // visitClassDecl
 	// PARTIALY NOT MATCHING
 	public void visitBinaryExpr(){
 		int x = 10 + 10;
-		//x = 10 - 10; // extra jasmine lines being generated?
+		x = x + x;
 		x = 10 * 10;
 		x = 10 / 10;
 		x = 10 % 10;
+		//x = 10 - 10; // extra jasmine lines being generated?
 
 		double y = 2.1 + 2.1;
-		y = 2.1 + x;
+		y = x * x;
+		y = 2.1 * x;
+		y = 2.1 / x;
+		y = 2.1 % x;
+		//y = 2.1 - x; // extra jasmine lines being generated?
+
+		//float z = x + x; // DIFF | OUR: fstore 4 | REF: fstore (SimpleInstrction related?)
+
+		//long v = x + x; // DIFF | OUR: fstore 4 | REF: lstore (SimpleInstrction related?)
 	}
 
 	public void visitCInvocation(){
