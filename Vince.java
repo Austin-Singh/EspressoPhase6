@@ -1,70 +1,151 @@
-public class Vince {
+/**
+	Functions to check:
+	[1] visitLocalDecl() 		// "over 3 error"
+	[2] visitUnaryPostExpr()	// wrong (unary pre matches what unary post should be?)
+	[3] visitUnaryPreExpr()		// wrong
+	[4] visitForStat()			// wrong
+	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)
+	[6] visitBinaryExpr()		// subtraction broken
+	[7] visitCastExpr()			// wrong
+ */
 
-	int localParamInt = 1;
-	int localParamInt1 = 1;
-	int localParamInt2 = 1;
-	int localParamInt3 = 1;
-	boolean localParamBool = true;
-	boolean localParamBool1 = true;
-	boolean localParamBool2 = true;
-	boolean localParamBool3 = true;
+class VinceSuper { // visitClassDecl
+    public int vinceSuperField;
+}
+
+public class Vince extends VinceSuper { // visitClassDecl
+
+	public int fieldInt;
+	public static int staticFieldInt;
+	//public static double staticFieldDouble = 4.20; // The output mathces, but the order which the correct lines occur in the .j/.jr files are wrong.
 
 	Vince(){
 
 	}
 
-	Vince(boolean localParamBool){
-		this.localParamBool = localParamBool;
+	Vince(int x){
+		fieldInt = x;
 	}
 
-	Vince(int localParamInt){
-		this.localParamInt = localParamInt;
-	}
-
-
-	public boolean visitReturn(boolean localParamBool){
-		return this.localParamBool;
-	}
-
-	public Vince visitNew(){
-		Vince t;
-		Vince t1 = new Vince();
-		Vince t2 = new Vince(420);
-		return t;
-	}
-
-	public void testMultipleLocalParams(){
-		boolean t1 = false; // MATCH 
-		boolean t2 = false; // MATCH
-		boolean t3 = false; // MATCH
-		boolean t4 = false; // DIFF | our: istore | ref: istore 4
-		boolean t5 = false; // DIFF | our: istore | ref: istore 5
-
-		// Seemingly we are declaring local stack variables incorrectly
+	public static void main(String args[]){
 
 	}
 
-	public static void main(String args[]) {
+	public void visitContinueStat(){
+		while(true){continue;}
+	}
 
-		boolean var1 = true;
+	public void visitDoStat(){
+		do{}while(true);
+	}
 
-		if (var1) {
-			if(var1){
-				if(var1){
+	// NOT MATCHING
+	public void visitForStat(){
+		//for(int i = 100; i > 10; i){}
+	}
+
+	public void visitWhileStat(){
+		while(true){
+
+		}
+	}
+
+	public void visitIfStat(){
+		if(true){
+			if(true){
+				if(true){
+
+				}
+			}else{
+				if(true){
 
 				}
 			}
 		}else{
-			if(var1){
-				if(var1){
+			if(true){
 
-				}
 			}
 		}
-
-		while(var1){
-			break;
-		}
-
 	}
+
+	public int visitReturnStat(int x){
+		return x;
+	}
+
+	public int visitThis(){
+		this.fieldInt = 0;
+	}
+
+	public void visitBreakStat(){
+		while(true){break;}
+	}
+
+	public void visitLocalDecl(){
+		int localDecl = 0;
+	}
+
+	public void visitInvocation(){
+		Vince cInvo = new Vince(); // visitCInvocation
+		cInvo.visitContinueStat(); // visitInvocation
+	}
+
+	public void visitNameExpr(int x){
+		Vince cInvo = new Vince(); // NameExpr
+		cInvo.visitContinueStat(); // NameExpr
+		//int y = cInvo.fieldInt; // NameExpr
+		//int z = x; // NameExpr
+	}
+
+	public void visitNew(){
+		Vince c = new Vince();
+	}
+
+	public static int visitStaticInitDecl(){
+		Vince v = new Vince();
+		v.staticFieldInt = 1;
+		return v.staticFieldInt;
+	}
+
+	public void visitSuper(){
+		int x = super.vinceSuperField;
+	}
+
+	// NOT MATCHING
+	public int visitUnaryPostExpr(int x){
+		//return visitUnaryPostExpr(x++);
+	}
+
+	// NOT MATCHING
+	public int visitUnaryPreExpr(int x){
+		//return visitUnaryPreExpr(x++);
+	}
+
+	// PARTIALY NOT MATCHING
+	public void visitBinaryExpr(){
+		int x = 10 + 10;
+		//x = 10 - 10; // extra jasmine lines being generated?
+		x = 10 * 10;
+		x = 10 / 10;
+		x = 10 % 10;
+
+		double y = 2.1 + 2.1;
+		y = 2.1 + x;
+	}
+
+	public void visitCInvocation(){
+		Vince cInvo = new Vince(); // visitCInvocation
+		cInvo.visitContinueStat(); // visitInvocation
+	}
+
+	// NOT MATCHING
+	public void visitCastExpr(){
+		//int x = 10;
+		//double z = (double)x; 
+		//x = (int)z;
+	}
+
+	public void visitConstructorDecl(){
+		Vince v = new Vince(10);
+	}
+
 }
