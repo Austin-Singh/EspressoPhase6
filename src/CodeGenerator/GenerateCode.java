@@ -864,7 +864,6 @@ class GenerateCode extends Visitor {
 			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1)); classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_dadd : RuntimeConstants.opc_dsub));
 		}
 
-		// Now determine if its a FieldRef or a NameExpr
 		if (up.expr() instanceof FieldRef) {
 
 			FieldRef fr = (FieldRef)up.expr();
@@ -872,7 +871,6 @@ class GenerateCode extends Visitor {
 		
 		} else if (up.expr() instanceof NameExpr) {
 		
-			// could still be a field! check what the myDecl is!
 			NameExpr ne = (NameExpr)up.expr();
 		
 			if (ne.myDecl instanceof FieldDecl) {

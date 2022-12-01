@@ -1,17 +1,16 @@
 /**
+	Need to change:
+	[2] visitUnaryPostExpr()	// wrong
+	[3] visitUnaryPreExpr()		// wrong
+	
 	Possibly(?) correct:
 	[1] visitLocalDecl() 		// missing number for "istore" command
 	[4] visitForStat()			// missing (unsued) label
 	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)
 
-	Need to change:
-	[2] visitUnaryPostExpr()	// wrong
-	[3] visitUnaryPreExpr()		// wrong
-	
-	"COMPLETED" List:
+	Fixed List:
 	[6] visitBinaryExpr()		// subtraction broken
 	[7] visitCastExpr()			// wrong
-	
  */
 
 class VinceSuper { // visitClassDecl
@@ -22,7 +21,9 @@ public class Vince extends VinceSuper { // visitClassDecl
 
 	public int fieldInt;
 	public static int staticFieldInt;
-	//public static double staticFieldDouble = 4.20; // The output mathces, but the order which the correct lines occur in the .j/.jr files are wrong.
+
+	// NOT MATCHING (visitStaticInitDecl)
+	//public static double staticFieldDouble = 1.1; // WRONG ORDER | error seemingly only occurs when initalized here, not in the functions
 
 	Vince(){
 		//
@@ -46,8 +47,7 @@ public class Vince extends VinceSuper { // visitClassDecl
 
 	// NOT MATCHING
 	public void visitForStat(){
-		for (int i = 0; i <= 10; i = i + 2) {
-		}
+		//for (int i = 0; i <= 10; i = i + 2) {}
 	}
 
 	public void visitWhileStat(){
@@ -110,11 +110,9 @@ public class Vince extends VinceSuper { // visitClassDecl
 		Vince c = new Vince();
 	}
 
-	// NOT MATCHING / WRONG ORDER
 	public static int visitStaticInitDecl(){
 		Vince v = new Vince();
 		v.staticFieldInt = 1;
-		return v.staticFieldInt;
 	}
 
 	public void visitSuper(){
