@@ -904,7 +904,7 @@ class GenerateCode extends Visitor {
 
 		// YOUR CODE HERE
 		up.expr().visit(this);
-		if (up.op().operator().equals("−")){
+		if (up.op().operator().equals("-")){
 
 			if (up.expr().type.isIntegerType()){
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ineg));
@@ -989,7 +989,7 @@ class GenerateCode extends Visitor {
 			
 		// YOUR CODE HERE
 		String op = be.op().operator();
-		if (op.equals("+") || op.equals("−") || op.equals("*") || op.equals("/") || op.equals("%") || op.equals("&") || op.equals("|") || op.equals("^")) {
+		if (op.equals("+") || op.equals("-") || op.equals("*") || op.equals("/") || op.equals("%") || op.equals("&") || op.equals("|") || op.equals("^")) {
 
 			PrimitiveType ct = PrimitiveType.ceilingType((PrimitiveType) be.left().type, (PrimitiveType) be.right().type);
 			be.left().visit(this);
@@ -1001,7 +1001,7 @@ class GenerateCode extends Visitor {
 				
 				if (op.equals("+"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
-				else if (op.equals("−"))
+				else if (op.equals("-"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
 				else if (op.equals("*"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_imul));
@@ -1020,7 +1020,7 @@ class GenerateCode extends Visitor {
 
 				if (op.equals("+"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ladd));
-				else if (op.equals("−"))
+				else if (op.equals("-"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lsub));
 				else if (op.equals("*"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lmul));
@@ -1039,7 +1039,7 @@ class GenerateCode extends Visitor {
 
 				if (op.equals("+"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
-				else if (op.equals("−"))
+				else if (op.equals("-"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
 				else if (op.equals("*"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fmul));
@@ -1052,7 +1052,7 @@ class GenerateCode extends Visitor {
 
 				if (op.equals("+"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dadd));
-				else if (op.equals("−"))
+				else if (op.equals("-"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dsub));
 				else if (op.equals("*"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dmul));
