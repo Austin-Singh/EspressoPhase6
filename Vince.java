@@ -86,7 +86,7 @@ public class Vince extends VinceSuper { // visitClassDecl
 		while(true){break;}
 	}
 
-	// PARTIALY NOT MATCHING
+	// NOT MATCHING
 	public void visitLocalDecl(){
 		int localDecl1 = 0;
 		int localDecl2 = 0;
