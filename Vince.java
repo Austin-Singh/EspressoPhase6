@@ -1,10 +1,16 @@
 /**
 	Functions to check:
-	[1] visitLocalDecl() 		// "over 3 error"
-	[2] visitUnaryPostExpr()	// wrong (unary pre matches what unary post should be?)
+	[1] visitLocalDecl() 		// "over 3 error" | the missing number for "istore" command
+	[2] visitUnaryPostExpr()	// wrong
 	[3] visitUnaryPreExpr()		// wrong
-	[4] visitForStat()			// wrong
+	[4] visitForStat()			// extra/missing label - messaged Ben about this one
 	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)
+	
+	
+ */
+
+/**
+	"COMPLETED" List:
 	[6] visitBinaryExpr()		// subtraction broken
 	[7] visitCastExpr()			// wrong
  */
@@ -20,7 +26,7 @@ public class Vince extends VinceSuper { // visitClassDecl
 	//public static double staticFieldDouble = 4.20; // The output mathces, but the order which the correct lines occur in the .j/.jr files are wrong.
 
 	Vince(){
-
+		//
 	}
 
 	Vince(int x){
@@ -28,7 +34,7 @@ public class Vince extends VinceSuper { // visitClassDecl
 	}
 
 	public static void main(String args[]){
-
+		//
 	}
 
 	public void visitContinueStat(){
@@ -132,14 +138,14 @@ public class Vince extends VinceSuper { // visitClassDecl
 		x = 10 * 10;
 		x = 10 / 10;
 		x = 10 % 10;
-		//x = 10 - 10; // extra jasmine lines being generated?
+		x = 10 - 10; // extra jasmine lines being generated?
 
 		double y = 2.1 + 2.1;
 		y = x * x;
 		y = 2.1 * x;
 		y = 2.1 / x;
 		y = 2.1 % x;
-		//y = 2.1 - x; // extra jasmine lines being generated?
+		y = 2.1 - x; // extra jasmine lines being generated?
 
 		//float z = x + x; // DIFF | OUR: fstore 4 | REF: fstore (SimpleInstrction related?)
 
@@ -153,9 +159,18 @@ public class Vince extends VinceSuper { // visitClassDecl
 
 	// NOT MATCHING
 	public void visitCastExpr(){
-		//int x = 10;
-		//double z = (double)x; 
-		//x = (int)z;
+		int i = 1;
+		double d = 2.2;
+		float f = 1;
+		long l = 1;
+
+		l = (int)f;
+		l = (int)d;
+		i = (int)f;
+		i = (int)d;
+		d = (double)i;
+		d = (double)f;
+
 	}
 
 	public void visitConstructorDecl(){
