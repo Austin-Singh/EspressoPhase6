@@ -46,7 +46,8 @@ public class Vince extends VinceSuper { // visitClassDecl
 
 	// NOT MATCHING
 	public void visitForStat(){
-		//for(int i = 100; i > 10; i){}
+		for (int i = 0; i <= 10; i = i + 2) {
+		}
 	}
 
 	public void visitWhileStat(){
@@ -130,7 +131,6 @@ public class Vince extends VinceSuper { // visitClassDecl
 		//return visitUnaryPreExpr(x++);
 	}
 
-	// PARTIALY NOT MATCHING
 	public void visitBinaryExpr(){
 		int x = 10 + 10;
 		x = x + x;
@@ -156,7 +156,6 @@ public class Vince extends VinceSuper { // visitClassDecl
 		cInvo.visitContinueStat(); // visitInvocation
 	}
 
-	// NOT MATCHING
 	public void visitCastExpr(){
 		int i = 1;
 		double d = 2.2;
