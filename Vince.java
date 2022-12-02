@@ -120,48 +120,36 @@ public class Vince extends VinceSuper { // visitClassDecl
 		int x = super.vinceSuperField;
 	}
 
-	// NOT MATCHING
 	public int visitUnaryPostExprInt(int x){
-		//return visitUnaryPostExprInt(x++);
-
-		/**
-
-			I think these outputs might be logically equivalent. I think "iinc 1 1" does the exact same thing as our four lines.
-
-			REF:
-				iinc 1 1
-			OUR:
-				dup
-				iconst_1
-				iadd
-				istore_1
-		 */
-
+		return visitUnaryPostExprInt(x++);
 	}
 
-	// NOT MATCHING
 	public int visitUnaryPost(int x){
-		//return visitUnaryPost(x++); // this one might be logically identical
+		return visitUnaryPost(x++); 
 	}
 
-	// NOT MATCHING
 	public double visitUnaryPost(double x){
-		//return visitUnaryPost(x++);
+		return visitUnaryPost(x++);
 	}
 
-	// NOT MATCHING
 	public byte visitUnaryPost(byte x){
-		//return visitUnaryPost(x++);
+		return visitUnaryPost(x++);
 	}
 
 	public long visitUnaryPost(long x){
 		return visitUnaryPost(x++);
-		// when using post op on a long, the output matches
 	}
 
 	public float visitUnaryPost(float x){
 		return visitUnaryPost(x++);
-		// when using post op on a float, the output matches
+	}
+	
+	public short visitUnaryPost(short x){
+		return visitUnaryPost(x++);
+	}
+	
+	public char visitUnaryPost(char x){
+		return visitUnaryPost(x++);
 	}
 
 	// NOT MATCHING
