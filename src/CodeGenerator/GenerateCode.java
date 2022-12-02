@@ -855,7 +855,6 @@ class GenerateCode extends Visitor {
 			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
 		}
 
-		
 		if (up.expr().type.isIntegerType()) {
 			classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
 		classFile.addInstruction(new Instruction(up.op().operator().equals("++") ? RuntimeConstants.opc_iadd : RuntimeConstants.opc_isub));
@@ -1343,6 +1342,12 @@ class GenerateCode extends Visitor {
 				cd.body().children[i].visit(this);
 			}
 		}
+				
+		for (int i = 0; i < cd.body().nchildren; i++) {
+			if (!(cd.body().children[i] instanceof FieldDecl)) {
+				cd.body().children[i].visit(this);
+			}
+		}
 		
 		if (cd.methodTable.get("<clinit>") == null) {
 			FieldDecl fd;
@@ -1364,13 +1369,7 @@ class GenerateCode extends Visitor {
 				classFile.endMethod();
 			}
 		}
-		
-		for (int i = 0; i < cd.body().nchildren; i++) {
-			if (!(cd.body().children[i] instanceof FieldDecl)) {
-				cd.body().children[i].visit(this);
-			}
-		}
-		
+
 		if (needClinit) {
 			cd.body().append(si);
 		}

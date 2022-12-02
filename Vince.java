@@ -6,11 +6,12 @@
 	Possibly(?) correct:
 	[1] visitLocalDecl() 		// missing number for "istore" command
 	[4] visitForStat()			// missing (unsued) label
-	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)
-
+	
 	Fixed List:
 	[6] visitBinaryExpr()		// subtraction broken
 	[7] visitCastExpr()			// wrong
+	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)
+		- this "issue" was actually with visitClassDecl
  */
 
 class VinceSuper { // visitClassDecl
@@ -21,9 +22,7 @@ public class Vince extends VinceSuper { // visitClassDecl
 
 	public int fieldInt;
 	public static int staticFieldInt;
-
-	// NOT MATCHING (visitStaticInitDecl)
-	//public static double staticFieldDouble = 1.1; // WRONG ORDER | error seemingly only occurs when initalized here, not in the functions
+	public static double staticFieldDouble = 1.1;
 
 	Vince(){
 		//
