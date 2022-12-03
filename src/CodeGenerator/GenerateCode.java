@@ -1056,7 +1056,7 @@ class GenerateCode extends Visitor {
 				}
 			}
 
-			up.expr().visit(this);
+			up.expr().visit(this); // pre
 		}
 
 		if (up.expr() instanceof FieldRef) {
