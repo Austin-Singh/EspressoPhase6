@@ -44,11 +44,11 @@ do
         runTest $f
         printf "\n\n"
 done
+
 ant clean > /dev/null
 printf "Passed Tests: ${GREEN}$goodResults${NORMAL} of $total passed (${RED}$badResults${NORMAL} failed)\n\n"
 rm diff.txt
 rm ref.txt
-rm me.txt
 rm our.txt
 rm ourj.txt
 rm refj.txt

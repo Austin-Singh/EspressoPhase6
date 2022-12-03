@@ -67,7 +67,7 @@ public class Vince extends VinceSuper { // visitClassDecl
 
 	// NOT MATCHING
 	public void visitForStat(){
-		//for (int i = 0; i <= 10; i = i + 2) {}
+		//for (int i = 0; i <= 10; i = i++) {}
 	}
 
 	public void visitWhileStat(){
