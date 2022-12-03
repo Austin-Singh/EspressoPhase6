@@ -40,8 +40,8 @@ public class Vince extends VinceSuper { // visitClassDecl
 	}
 
 	public void unaryPreField(){
-		//int y;
-		//y = ++fieldInt1;
+		int y;
+		y = ++fieldInt1;
 	}
 
 	public void unaryPostField(){

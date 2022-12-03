@@ -1063,8 +1063,8 @@ class GenerateCode extends Visitor {
 			FieldRef fr = (FieldRef)up.expr();
 			FieldDecl fd = fr.myDecl;
 
+			fr.target().visit(this);
 			if (fd.isStatic()) {
-				fr.target().visit(this);
 				
 				if (!(fd.isClassType())) {
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
@@ -1074,49 +1074,50 @@ class GenerateCode extends Visitor {
 				
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup)); //check if this needs to use different dup calls for different types
 			}else {
-				fr.target().visit(this);
 				
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup)); //check if this needs to use different dup calls for different types
 				
 				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield, fr.targetType.typeName(), fr.fieldName().getname(), fr.type.signature()));
 				
-				if (up.expr().type.isLongType() || up.expr().type.isDoubleType()) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup2));
-				}else {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup_x1)); // this one
+				if (up.expr().type.isIntegerType() || up.expr().type.isByteType() || up.expr().type.isShortType() || up.expr().type.isCharType()) {
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+					if (up.op().operator().equals("++")) {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
+					}else {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
+					}
+				}else if (up.expr().type.isLongType()) {
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
+					if (up.op().operator().equals("++")) {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_ladd));
+					}else {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_lsub));
+					}
+				}else if (up.expr().type.isDoubleType()) {
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1));
+					if (up.op().operator().equals("++")) {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_dadd));
+					}else {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_dsub));
+					}
+				}else if (up.expr().type.isFloatType()) {
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
+					if (up.op().operator().equals("++")) {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
+					}else {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
+					}
 				}
+
+			}
+
+			if (up.expr().type.isLongType() || up.expr().type.isDoubleType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup2));
+			}else {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup_x1)); // this one
 			}
 
 
-			if (up.expr().type.isIntegerType() || up.expr().type.isByteType() || up.expr().type.isShortType() || up.expr().type.isCharType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
-				if (up.op().operator().equals("++")) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
-				}else {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
-				}
-			}else if (up.expr().type.isLongType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
-				if (up.op().operator().equals("++")) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_ladd));
-				}else {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lsub));
-				}
-			}else if (up.expr().type.isDoubleType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1));
-				if (up.op().operator().equals("++")) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dadd));
-				}else {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dsub));
-				}
-			}else if (up.expr().type.isFloatType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
-				if (up.op().operator().equals("++")) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
-				}else {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
-				}
-			}
 
 			if (fd.isStatic()) {
 				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_putstatic, fr.targetType.typeName(), fr.fieldName().getname(), fr.type.signature()));
