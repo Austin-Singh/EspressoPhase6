@@ -21,15 +21,38 @@ class VinceSuper { // visitClassDecl
 public class Vince extends VinceSuper { // visitClassDecl
 
 	public int fieldInt;
+	public int fieldInt1 = 1;
 	public static int staticFieldInt;
 	public static double staticFieldDouble = 1.1;
 
 	Vince(){
-		//
+
 	}
 
 	Vince(int x){
 		fieldInt = x;
+	}
+
+	public void unaryPre(){
+		int x;
+		int y;
+		y = ++x;
+	}
+
+	public void unaryPreField(){
+		//int y;
+		//y = ++fieldInt1;
+	}
+
+	public void unaryPostField(){
+		int y;
+		y = fieldInt1++;
+	}
+
+	public void unaryPost(){
+		int x;
+		int y;
+		y = x++;
 	}
 
 	public static void main(String args[]){

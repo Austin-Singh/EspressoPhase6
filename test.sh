@@ -23,5 +23,7 @@ rm refj.txt
 rm ourj.txt
 rm Vince.rj
 rm Vince.j
+rm VinceSuper.rj
+rm VinceSuper.j
 rm diff.txt
 ant clean > /dev/null
