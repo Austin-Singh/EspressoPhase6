@@ -1,29 +1,56 @@
 #!/bin/bash
 
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+NORMAL=$(tput sgr0)
+
+function runTest {
+
+        ./espressoc $1 > our.txt
+        ./espressocr $1 > ref.txt
+
+        sed '/^;/d' *.rj > refj.txt
+        sed '/^;/d' *.j > ourj.txt
+        diff refj.txt ourj.txt > diff.txt
+
+        if [ -s diff.txt ]; then
+                ((badResults=badResults+1))
+                printf "%-15s %-110s %-15s\n" "Processing ..." $f "${RED}NOT MATCHING [$total]${NORMAL}"
+
+                #cat our.txt
+                cat diff.txt
+        else 
+                ((goodResults=goodResults+1))
+                printf "%-15s %-110s %-15s\n" "Processing ..." $f "${GREEN}MATCHING [$total]${NORMAL}"
+
+                #cat our.txt
+        fi
+
+        find . -name "*.j" -type f -delete
+        find . -name "*.rj" -type f -delete
+
+}
+
 clear
 ant > /dev/null
-./espressoc Vince.java > our.txt
-./espressocr Vince.java > ref.txt
 
-sed '/^;/d' Vince.rj > refj.txt
-sed '/^;/d' Vince.j > ourj.txt
-diff refj.txt ourj.txt > diff.txt
-
-if [ -s diff.txt ]; then
-        cat our.txt
-        cat diff.txt
-        printf "$(tput setaf 1)NOT MATCHING$(tput sgr0)\n"
-else 
-        cat our.txt
-        printf "$(tput setaf 2)MATCHING$(tput sgr0)\n"
-fi
-rm our.txt
-rm ref.txt
-rm refj.txt
-rm ourj.txt
-rm Vince.rj
-rm Vince.j
-rm VinceSuper.rj
-rm VinceSuper.j
-rm diff.txt
+tests="/home/wsl/EspressoPhase6/Tests/Phase6/Espresso/GoodTests/*"
+goodResults=0
+badResults=0
+total=0
+for f in $tests
+do
+        ((total=total+1))
+        runTest $f
+        printf "\n\n"
+done
 ant clean > /dev/null
+printf "Passed Tests: ${GREEN}$goodResults${NORMAL} of $total passed (${RED}$badResults${NORMAL} failed)\n\n"
+rm diff.txt
+rm ref.txt
+rm me.txt
+rm our.txt
+rm ourj.txt
+rm refj.txt
+
+
