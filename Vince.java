@@ -1,13 +1,11 @@
 /**
-	Need to change:
-	[2] visitUnaryPostExpr()	// wrong
-	[3] visitUnaryPreExpr()		// wrong
-	
 	Possibly(?) correct:
 	[1] visitLocalDecl() 		// missing number for "istore" command
 	[4] visitForStat()			// missing (unsued) label
 	
 	Fixed List:
+	[2] visitUnaryPostExpr()	// wrong
+	[3] visitUnaryPreExpr()		// wrong
 	[6] visitBinaryExpr()		// subtraction broken
 	[7] visitCastExpr()			// wrong
 	[5] visitStaticInitDecl()	// correct jasmine code, wrong order in the file (ref has it at the start)

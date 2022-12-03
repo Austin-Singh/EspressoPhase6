@@ -1307,7 +1307,6 @@ class GenerateCode extends Visitor {
 				else if (op.equals(">>>"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iushr));
 			} else {
-				// Only Long type left, type checking made sure of that!
 				if (op.equals("<<"))
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lshl));
 				else if (op.equals(">>"))
