@@ -648,12 +648,11 @@ class GenerateCode extends Visitor {
 		String methodName = "";
 		String signature = "";
 
-		if (in.target() != null){
-			println(in.targetType.typeName() + ".");
-		}else{
-			println(currentClass.name() + ".");
+		if (in.target() != null) {
+			in.target().visit(this);
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
 		}
-
+		
 		if (!in.targetMethod.getModifiers().isStatic()) {
 			if (in.target() != null) {
 				in.target().visit(this);
