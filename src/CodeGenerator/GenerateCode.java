@@ -654,7 +654,9 @@ class GenerateCode extends Visitor {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
 			}
 		}else{
+			if (!(in.targetMethod.getModifiers().isStatic())) {
 			classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+			}
 		}
 
 		if (in.params() != null) {
