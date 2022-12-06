@@ -17,13 +17,14 @@ function runTest {
                 ((badResults=badResults+1))
                 printf "%-15s %-110s %-15s\n" "Processing ..." $f "${RED}NOT MATCHING [$total]${NORMAL}"
 
-                #cat our.txt
                 cat diff.txt
+                printf "\n\n"
         else 
                 ((goodResults=goodResults+1))
-                printf "%-15s %-110s %-15s\n" "Processing ..." $f "${GREEN}MATCHING [$total]${NORMAL}"
+                #printf "%-15s %-110s %-15s\n" "Processing ..." $f "${GREEN}MATCHING [$total]${NORMAL}"
 
                 #cat our.txt
+                ##printf "\n\n"
         fi
 
         find . -name "*.j" -type f -delete
@@ -42,7 +43,6 @@ for f in $tests
 do
         ((total=total+1))
         runTest $f
-        printf "\n\n"
 done
 
 ant clean > /dev/null
