@@ -647,7 +647,7 @@ class GenerateCode extends Visitor {
 		String className = "";
 		String methodName = "";
 		String signature = "";
-
+		
 		if (in.target() != null) {
 			in.target().visit(this);
 			if (in.targetMethod.getModifiers().isStatic()) {
@@ -814,8 +814,6 @@ class GenerateCode extends Visitor {
 		classFile.addComment(si, "Field Init Generation End");
 		si.initializer().visit(this);
 		classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
-		si.setCode(classFile.getCurrentMethodCode());
-		classFile.endMethod();
 		// - END -
 
 		si.setCode(classFile.getCurrentMethodCode());
