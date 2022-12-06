@@ -657,7 +657,7 @@ class GenerateCode extends Visitor {
 			}
 		}else{
 			if (!(in.targetMethod.getModifiers().isStatic())) {
-			classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 			}
 		}
 
@@ -913,7 +913,7 @@ class GenerateCode extends Visitor {
 				fr.target().visit(this);
 				
 				if (!(fd.isClassType())) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
+					//classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
 				}
 				
 				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, fr.targetType.typeName(), fr.fieldName().getname(), fr.type.signature())); //these parameters correct?
