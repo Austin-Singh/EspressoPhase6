@@ -670,7 +670,7 @@ class GenerateCode extends Visitor {
 
 			if (!(in.targetMethod.isInterfaceMember())) {
 				if (in.target() instanceof Super) {
-					opCode = RuntimeConstants.opc_invokenonvirtual;
+					opCode = RuntimeConstants.opc_invokespecial;
 				} else {
 					opCode = RuntimeConstants.opc_invokevirtual;
 				}
