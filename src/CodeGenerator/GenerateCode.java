@@ -621,6 +621,12 @@ class GenerateCode extends Visitor {
 			classFile.addComment(ld, "Local Variable Declaration");
 
 			// YOUR CODE HERE
+			if(ld.var().init() instanceof Assignment){
+				RHSofAssignment = true;
+			}else{
+				RHSofAssignment = false;
+			}
+
 			ld.var().init().visit(this);
 			gen.dataConvert(ld.var().init().type, ld.type());
 			if (ld.address < 4) {
@@ -653,7 +659,9 @@ class GenerateCode extends Visitor {
 		if (in.target() != null) {
 			in.target().visit(this);
 			if (in.targetMethod.getModifiers().isStatic()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
+				if(!in.targetMethod.getname().equals("exit") && !in.targetMethod.getname().equals("System")){
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
+				}
 			}
 		}else{
 			if (!(in.targetMethod.getModifiers().isStatic())) {
