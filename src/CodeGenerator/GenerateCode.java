@@ -454,6 +454,8 @@ class GenerateCode extends Visitor {
 		}
 		insideLoop = metaInsideLoop;
 		
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, contLabel));
+		
 		if (fs.incr() != null) {
 			fs.incr().visit(this);
 		}
