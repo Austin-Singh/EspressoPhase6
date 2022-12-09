@@ -384,37 +384,36 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ds, "Do Statement");
 
 		// YOUR CODE HERE
-		String topLabel = "L"+gen.getLabel();
+		String startLabel = "L"+gen.getLabel();
 		String endLabel = "L"+gen.getLabel();
 		String contLabel = "L"+gen.getLabel();
-		
-		String metaBreakLabel = gen.getBreakLabel();
-		String metaContinueLabel = gen.getContinueLabel();
+		String tempBreakLabel = gen.getBreakLabel();
+		String tempContinueLabel = gen.getContinueLabel();
 		
 		gen.setBreakLabel(endLabel);
 		gen.setContinueLabel(contLabel);
 		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-		
-		boolean metaInsideLoop = insideLoop;
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, startLabel));
+	
+		boolean tempInsideLoop = insideLoop;
 		insideLoop = true;
 		if (ds.stat() != null) {
 			ds.stat().visit(this);
 		}
-		insideLoop = metaInsideLoop;
+		insideLoop = tempInsideLoop;
 		
 		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, contLabel));
-		
+
 		if (ds.expr() != null) {
 			ds.expr().visit(this);
 			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
 		}
 		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, startLabel));
 		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
 		
-		gen.setBreakLabel(metaBreakLabel);
-		gen.setContinueLabel(metaContinueLabel);
+		gen.setBreakLabel(tempBreakLabel);
+		gen.setContinueLabel(tempContinueLabel);
 		// - END -
 
 		classFile.addComment(ds, "End DoStat");
@@ -427,12 +426,12 @@ class GenerateCode extends Visitor {
 		classFile.addComment(fs, "For Statement");
 		
 		// YOUR CODE HERE
-		String topLabel = "L"+gen.getLabel();
+		String startLabel = "L"+gen.getLabel();
 		String endLabel = "L"+gen.getLabel();
 		String contLabel = "L"+gen.getLabel();
-		
-		String metaBreakLabel = gen.getBreakLabel();
-		String metaContinueLabel = gen.getContinueLabel();
+		String tempBreakLabel = gen.getBreakLabel();
+		String tempContinueLabel = gen.getContinueLabel();
+
 		gen.setBreakLabel(endLabel);
 		gen.setContinueLabel(contLabel);
 		
@@ -440,19 +439,19 @@ class GenerateCode extends Visitor {
 			fs.init().visit(this);
 		}
 		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, startLabel));
 		
 		if (fs.expr() != null) {
 			fs.expr().visit(this);
 			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
 		}
 		
-		boolean metaInsideLoop = insideLoop;
+		boolean tempInsideLoop = insideLoop;
 		insideLoop = true;
 		if (fs.stats() != null) {
 			fs.stats().visit(this);
 		}
-		insideLoop = metaInsideLoop;
+		insideLoop = tempInsideLoop;
 		
 		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, contLabel));
 		
@@ -460,11 +459,11 @@ class GenerateCode extends Visitor {
 			fs.incr().visit(this);
 		}
 		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, startLabel));
 		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
 		
-		gen.setBreakLabel(metaBreakLabel);
-		gen.setContinueLabel(metaContinueLabel);
+		gen.setBreakLabel(tempBreakLabel);
+		gen.setContinueLabel(tempContinueLabel);
 		// - END -
 		
 		classFile.addComment(fs, "End ForStat");	
@@ -478,34 +477,33 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ws, "While Statement");
 
 		// YOUR CODE HERE
-		String topLabel = "L"+gen.getLabel();
+		String startLabel = "L"+gen.getLabel();
 		String endLabel = "L"+gen.getLabel();
+		String tempContinueLabel = gen.getContinueLabel();
+		String tempBreakLabel = gen.getBreakLabel();
 		
-		String metaContinueLabel = gen.getContinueLabel();
-		String metaBreakLabel = gen.getBreakLabel();
-		
-		gen.setContinueLabel(topLabel);
+		gen.setContinueLabel(startLabel);
 		gen.setBreakLabel(endLabel);
 		
-		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, startLabel));
 		
 		if (ws.expr() != null) {
 			ws.expr().visit(this);
 			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
 		}
 		
-		boolean metaInsideLoop = insideLoop;
+		boolean tempInsideLoop = insideLoop;
 		insideLoop = true;
 		if (ws.stat() != null) {
 			ws.stat().visit(this);
 		}
-		insideLoop = metaInsideLoop;
+		insideLoop = tempInsideLoop;
 		
-		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, topLabel));
+		classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_goto, startLabel));
 		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
 		
-		gen.setContinueLabel(metaContinueLabel);
-		gen.setBreakLabel(metaBreakLabel);
+		gen.setContinueLabel(tempContinueLabel);
+		gen.setBreakLabel(tempBreakLabel);
 		// - END -
 
 		classFile.addComment(ws, "End WhileStat");	
@@ -525,12 +523,11 @@ class GenerateCode extends Visitor {
 		String endLabel = "L"+gen.getLabel();
 		
 		is.expr().visit(this);
-		
-		if (is.elsepart() != null) {
-			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, elseLabel));
-		}
-		else {
+
+		if (is.elsepart() == null) {
 			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+		}else {
+			classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, elseLabel));
 		}
 		
 		if (is.thenpart() != null) {
@@ -540,12 +537,11 @@ class GenerateCode extends Visitor {
 			}
 		}
 		
-		if(is.elsepart() != null) {
+		if(is.elsepart() == null) {
+			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+		}else {
 			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, elseLabel));
 			is.elsepart().visit(this);
-			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
-		}
-		else {
 			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
 		}
 		// - END -
@@ -565,16 +561,16 @@ class GenerateCode extends Visitor {
 		}else{
 			rs.expr().visit(this);
 			
-			if (rs.getType().isClassType() || rs.getType().isStringType() || rs.getType().isNullType()) {
+			if(rs.getType().isNullType() || rs.getType().isStringType() || rs.getType().isClassType()){
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_areturn));
-			}else if (rs.getType().isFloatType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_freturn));
-			}else if (rs.getType().isLongType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lreturn));
-			}else if (rs.getType().isDoubleType()) {
+			}else if(rs.getType().isDoubleType()){
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_dreturn));
-			}else if (rs.getType().isIntegerType() || rs.getType().isBooleanType() || rs.getType().isByteType() || rs.getType().isCharType() || rs.getType().isShortType()) {
+			}else if(rs.getType().isIntegerType() || rs.getType().isBooleanType() || rs.getType().isByteType() || rs.getType().isCharType() || rs.getType().isShortType()){
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_ireturn));
+			}else if(rs.getType().isFloatType()){
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_freturn));
+			}else if(rs.getType().isLongType()){
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lreturn));
 			}
 		}
 		// - END -
@@ -639,8 +635,9 @@ class GenerateCode extends Visitor {
 
 			classFile.addComment(ld, "End LocalDecl");
 		}
-		else
+		else{
 			println(ld.line + ": LocalDecl:\tVisiting local variable declaration for variable '" + ld.var().name().getname() + "'.");
+		}
 
 		return null;
 	}
@@ -656,16 +653,16 @@ class GenerateCode extends Visitor {
 		String methodName = "";
 		String signature = "";
 		
-		if (in.target() != null) {
+		if (in.target() == null) {
+			if (!(in.targetMethod.getModifiers().isStatic())) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+			}
+		}else{
 			in.target().visit(this);
 			if (in.targetMethod.getModifiers().isStatic()) {
 				if(!in.targetMethod.getname().equals("exit") && !in.targetMethod.getname().equals("System")){
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
 				}
-			}
-		}else{
-			if (!(in.targetMethod.getModifiers().isStatic())) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 			}
 		}
 
@@ -676,28 +673,28 @@ class GenerateCode extends Visitor {
 			}
 		}
 
-		if (!(in.targetMethod.getModifiers().isStatic())) {
+		if (in.targetMethod.getModifiers().isStatic()) {
+
+			opCode = RuntimeConstants.opc_invokestatic;	
+
+		} else {
 
 			if (!(in.targetMethod.isInterfaceMember())) {
 				if (in.target() instanceof Super) {
-					opCode = RuntimeConstants.opc_invokespecial;
+				opCode = RuntimeConstants.opc_invokespecial;
 				} else {
-					opCode = RuntimeConstants.opc_invokevirtual;
+				opCode = RuntimeConstants.opc_invokevirtual;
 				}
 			} else {
 				opCode = RuntimeConstants.opc_invokeinterface;
-			}
-
-		} else {
-
-			opCode = RuntimeConstants.opc_invokestatic;			
+			}				
 
 		}
 
-		if (in.target() != null) {
-			className = in.targetType.typeName();
-		} else {
+		if (in.target() == null) {
 			className = currentClass.name();
+		} else {
+			className = in.targetType.typeName();
 		}
 
 		methodName = in.methodName().getname();
@@ -714,16 +711,16 @@ class GenerateCode extends Visitor {
 		
 		signature += ")";
 
-		if (in.targetMethod.returnType() != null) {
-			signature += in.targetMethod.returnType().signature();
-		} else {
+		if (in.targetMethod.returnType() == null) {
 			signature += "V";
+		} else {
+			signature += in.targetMethod.returnType().signature();
 		}
 
-		if (opCode != RuntimeConstants.opc_invokeinterface){
-			classFile.addInstruction(new MethodInvocationInstruction(opCode, className, methodName, signature));
-		}else{
+		if (opCode == RuntimeConstants.opc_invokeinterface){
 			classFile.addInstruction(new InterfaceInvocationInstruction(opCode,className, methodName, signature, in.params().nchildren+1));
+		}else{
+			classFile.addInstruction(new MethodInvocationInstruction(opCode, className, methodName, signature));
 		}
 		// - END -
 
@@ -743,29 +740,23 @@ class GenerateCode extends Visitor {
 		}
 
 		// YOUR CODE HERE
-		if (!(ne.myDecl instanceof FieldDecl)) {
-
-			println(ne.line + ": NameExpr:\tGenerating code for a local var/param (access) for '" + ne.name().getname() + "'.");
-
-			int address = ((VarDecl)ne.myDecl).address();
-			if (address >= 4){
-				classFile.addInstruction(new SimpleInstruction(gen.getLoadInstruction(ne.type, address, false), address));
-			}else{
-				classFile.addInstruction(new Instruction(gen.getLoadInstruction(ne.type, address, false)));
-			}
-
-		} else {
-
+		if (ne.myDecl instanceof FieldDecl) {
 			FieldDecl fd = (FieldDecl) ne.myDecl;
 			println(ne.line + ": NameExpr:\tGenerating code for a field reference (getfield) for field '." + ne.name().getname() + "' in class '" + currentClass.name() + "'.");
-
 			if (!fd.modifiers.isStatic()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield, currentClass.name(), ne.name().getname(), ne.type.signature()));
 			} else {
 				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, currentClass.name(), ne.name().getname(), ne.type.signature()));
 			}
-
+		} else {
+			println(ne.line + ": NameExpr:\tGenerating code for a local var/param (access) for '" + ne.name().getname() + "'.");
+			int address = ((VarDecl)ne.myDecl).address();
+			if (address >= 4){
+				classFile.addInstruction(new SimpleInstruction(gen.getLoadInstruction(ne.type, address, false), address));
+			}else{
+				classFile.addInstruction(new Instruction(gen.getLoadInstruction(ne.type, address, false)));
+			}
 		}
 		// - END -
 
@@ -790,7 +781,10 @@ class GenerateCode extends Visitor {
 		}
 
 		String signature;
-		if (ne.getConstructorDecl() != null) {
+		if (ne.getConstructorDecl() == null) {
+			signature = "()V";
+			
+		} else {
 			signature = "(";
 			if (ne.getConstructorDecl().params() != null){
 				ne.getConstructorDecl().params().visit(this);
@@ -801,9 +795,7 @@ class GenerateCode extends Visitor {
 			}
 
 			signature += ")V";
-			classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial, ne.type().typeName(), "<init>", signature));
-		} else {
-			signature = "()V";
+			classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial, ne.type().typeName(), "<init>", signature));			
 		}
 		// - END -
 
@@ -866,7 +858,18 @@ class GenerateCode extends Visitor {
 				}
 			}
 			else {
-				if (up.expr().type.isLongType()) {
+				if (up.expr().type.isShortType() || up.expr().type.isByteType() || up.expr().type.isCharType()) {
+
+										classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+					if (up.op().operator().equals("++")) {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
+					}
+					else {
+						classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
+					}
+				}
+				else if (up.expr().type.isLongType()) {
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup2));
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
 					if (up.op().operator().equals("++")) {
@@ -894,16 +897,6 @@ class GenerateCode extends Visitor {
 					}
 					else {
 						classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
-					}
-				}
-				else if (up.expr().type.isByteType() || up.expr().type.isShortType() || up.expr().type.isCharType()) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
-					if (up.op().operator().equals("++")) {
-						classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
-					}
-					else {
-						classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
 					}
 				}
 				if (address < 4)
@@ -952,6 +945,15 @@ class GenerateCode extends Visitor {
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
 				}
 			}
+			else if (up.expr().type.isFloatType()) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
+				if (up.op().operator().equals("++")) {
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
+				}
+				else {
+					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
+				}
+			}
 			else if (up.expr().type.isLongType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
 				if (up.op().operator().equals("++")) {
@@ -969,15 +971,7 @@ class GenerateCode extends Visitor {
 				else {
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_dsub));
 				}
-			}
-			else if (up.expr().type.isFloatType()) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
-				if (up.op().operator().equals("++")) {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
-				}
-				else {
-					classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
-				}
+
 			}
 			
 			if (fd.isStatic()) {
@@ -999,14 +993,11 @@ class GenerateCode extends Visitor {
 		classFile.addComment(up,"Unary Pre Expression");
 
 		// YOUR CODE HERE
-		if (up.op().operator().equals("-")) {
+		if (up.op().operator().equals("!")) {
 			up.expr().visit(this);
-			
-			String instString = up.expr().type.getTypePrefix() + "neg";
-			classFile.addInstruction(new Instruction(Generator.getOpCodeFromString(instString)));
-		}
-		else if (up.op().operator().equals("+")) {
-			up.expr().visit(this);
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_ixor));
+
 		}
 		else if (up.op().operator().equals("~")) {
 			up.expr().visit(this);
@@ -1018,11 +1009,6 @@ class GenerateCode extends Visitor {
 				classFile.addInstruction(new LdcLongInstruction(RuntimeConstants.opc_ldc2_w, -1));
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_lxor));
 			}
-		}
-		else if (up.op().operator().equals("!")) {
-			up.expr().visit(this);
-			classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
-			classFile.addInstruction(new Instruction(RuntimeConstants.opc_ixor));
 		}
 		else if (up.op().operator().equals("++") || up.op().operator().equals("--")) {
 			if (up.expr() instanceof NameExpr) {
@@ -1160,6 +1146,16 @@ class GenerateCode extends Visitor {
 				}
 			}
 		}
+		else if (up.op().operator().equals("+")) {
+			up.expr().visit(this);
+		}
+		else if (up.op().operator().equals("-")) {
+			up.expr().visit(this);
+			String instString = up.expr().type.getTypePrefix() + "neg";
+			classFile.addInstruction(new Instruction(Generator.getOpCodeFromString(instString)));
+		}
+
+
 		// - END -
 
 		classFile.addComment(up, "End UnaryPreExpr");
@@ -1246,18 +1242,14 @@ class GenerateCode extends Visitor {
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_drem));
 
 			}
-		} else if (op.equals("&&") || op.equals("||")) {
-			
-			String donelabel;
-			be.left().visit(this);
-			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
-			donelabel = gen.getLabel();
-			classFile.addInstruction(new JumpInstruction((op.equals("&&") ? RuntimeConstants.opc_ifeq : RuntimeConstants.opc_ifne), "L" + donelabel));
-			classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
-			be.right().visit(this);
-			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + donelabel));
+		}
+		else if (op.equals("instanceof")) {
 
-		} else if (op.equals("==") || op.equals("!=") || op.equals("<=") || op.equals(">=") || op.equals(">") || op.equals("<")) {
+			be.left().visit(this);
+			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_instanceof, ((NameExpr) be.right()).name().getname()));
+
+		}
+		else if (op.equals("==") || op.equals("!=") || op.equals("<=") || op.equals(">=") || op.equals(">") || op.equals("<")) {
 
 			String truelabel, donelabel;
 			truelabel = gen.getLabel();
@@ -1329,7 +1321,8 @@ class GenerateCode extends Visitor {
 					classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + donelabel));
 			}
 
-		} else if (op.equals("<<") || op.equals(">>") || op.equals(">>>")) {
+		}
+		else if (op.equals("<<") || op.equals(">>") || op.equals(">>>")) {
 
 			be.left().visit(this);
 			be.right().visit(this);
@@ -1350,10 +1343,17 @@ class GenerateCode extends Visitor {
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_lushr));
 			}
 
-		} else if (op.equals("instanceof")) {
-
+		}
+		else if (op.equals("&&") || op.equals("||")) {
+			
+			String donelabel;
 			be.left().visit(this);
-			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_instanceof, ((NameExpr) be.right()).name().getname()));
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
+			donelabel = gen.getLabel();
+			classFile.addInstruction(new JumpInstruction((op.equals("&&") ? RuntimeConstants.opc_ifeq : RuntimeConstants.opc_ifne), "L" + donelabel));
+			classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
+			be.right().visit(this);
+			classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, "L" + donelabel));
 
 		}
 		// - END -
@@ -1368,26 +1368,28 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ci, "Explicit Constructor Invocation");
 
 		// YOUR CODE HERE
+		String className;
+		String signature = "(";
+
 		classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 
-		if (ci.args() != null)
+		if (ci.args() != null){
 			ci.args().visit(this);
-
-		String className;
+		}
 		
-		if (ci.superConstructorCall())
+		if (ci.superConstructorCall()){
 			className = currentClass.superClass().typeName();
-		else
+		}else{
 			className = currentClass.name();
+		}
 		
-		String signature = "(";
 		if (ci.args() != null) {
 			ci.constructor.params().visit(this);
 		}
 		
 		signature += ci.constructor.paramSignature();
-		
 		signature += ")V";
+
 		classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial, className,"<init>",signature));
 		// - END -
 
@@ -1426,7 +1428,7 @@ class GenerateCode extends Visitor {
 			if (castType.isShortType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2s));
 			}
-		}
+		}		
 		else if (exprType.isDoubleType()) {
 			if (castType.isIntegerType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_d2i));
@@ -1472,7 +1474,7 @@ class GenerateCode extends Visitor {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_f2i));
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_i2s));
 			}
-		}
+		}		
 		else if (exprType.isLongType()) {
 			if (castType.isIntegerType()) {
 				classFile.addInstruction(new Instruction(RuntimeConstants.opc_l2i));
@@ -1498,7 +1500,7 @@ class GenerateCode extends Visitor {
 		}
 		else if (castType.getTypePrefix().equals(exprType.getTypePrefix())) {
 			return null;
-		}
+		}		
 		else if (Type.isSuper((ClassType)exprType, (ClassType)castType)) {
 			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, ((ClassType)castType).typeName()));
 		}
