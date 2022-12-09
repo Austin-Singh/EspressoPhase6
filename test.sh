@@ -17,7 +17,7 @@ function runTest {
                 ((badResults=badResults+1))
                 printf "%-15s %-110s %-15s\n" "Processing ..." $f "${RED}NOT MATCHING [$total]${NORMAL}"
 
-                cat diff.txt
+                #cat diff.txt
                 printf "\n\n"
         else 
                 ((goodResults=goodResults+1))

@@ -1,0 +1,165 @@
+#!/bin/bash
+
+USER=NONE
+
+SERVER=java.cs.unlv.edu
+da=`date | sed 's/ /_/g'`
+
+if [ $USER == "NONE" ]; then
+  echo "Please replace the 'NONE' in line 3 of this script with your username on $SERVER and re-run the script"
+  exit
+fi
+
+if [ $# -eq 0 ] ; then
+    ./espressou help
+    exit
+fi
+
+if [ $HOSTNAME == "java.cs.unlv.edu" ] ; then
+  CP="cp "
+else
+  CP="scp $USER@$SERVER:"
+fi
+
+if [ $1 == "install" ]; then
+    if [ $2 == "tests" ]; then
+	if ! [ $# -eq 3 ] ; then
+	    echo "Usage: espressou install tests <directory>"
+	    exit
+	fi
+	rm -rf ./$3/Tests
+	mkdir ./$3/Tests
+	echo "Copying tests files."
+	$CP/home/matt/CSC460/Espresso/Tests/Tests.tar ./$3/Tests/.
+	cd ./$3/Tests
+	tar xvf Tests.tar > /dev/null 2>&1
+	rm Tests.tar
+	cd ..
+	echo "Test files installed in `pwd`/$3/Tests"
+	exit
+    fi
+    # install a phase - phase number in $2
+
+    # is the phase even open?
+    case $2 in
+	1|2|3|4|5|6 )
+	    if  [ `ssh $USER@$SERVER /home/matt/CSC460/Espresso/open $2` != "Open" ] ; then
+		echo "Phase $2 is not open for handout yet!"
+		exit
+	    fi
+	    ;;
+	* ) 
+	    echo "Phase $2 does not exists; select 1 through 6"
+	    exit
+	    ;;
+    esac
+    # if the phase is installed move it
+    if [ -d Phase$2 ]; then
+	echo "Phase$2 directory already exists"
+	echo "Moving it to Phase$2-$da"
+	mv Phase$2 Phase$2-$da
+    fi
+
+    echo "Downloading phase $2"
+    mkdir Phase$2
+	    # cp/scp the phase
+    $CP/home/matt/CSC460/Espresso/Phase$2/Espresso-Phase$2-Handout.tar Phase$2/.
+ 
+    cd Phase$2
+    echo "Unpacking phase $2 in Phase$2/"
+    tar xvf Espresso-Phase$2-Handout.tar > /dev/null 2>&1
+    rm -f Espresso-Phase$2-Handout.tar
+    cd ..
+    echo "Done!"
+elif [ $1 == "clean" ]; then
+    if ! [ $# -eq 2 ] ; then
+	echo "Usage: espressou clean <phase>"
+	exit
+    fi
+    cnt=`ls | grep "Phase$2-" | wc -l | sed 's/ //g'`
+    echo $cnt
+    if [ $cnt -gt 0 ]; then
+        echo "The following old directories for phase $2 exist:"
+	ls | grep "Phase$2-"
+    fi
+    if [ $cnt -eq 0 ]; then
+	echo "There are no old directories to remove for phase $2!"
+	exit
+    fi
+    case $2 in
+	1|2|3|4|5|6 ) 
+	    read -p "Are you sure you want to remove old directories of phase $2 [y/n] ? " ans
+	    if [ $ans == 'y' ]; then	    
+		echo "Ok - it is too late now!"
+		echo "rm -rf Phase$2-*"
+		rm -rf Phase$2-*
+	    fi
+	    ;;
+	* ) echo "Phase $2 does not exits; select 1 thorugh 6."
+	    ;;
+    esac
+elif [ $1 == "patch" ]; then
+    if ! [ $# -eq 3 ] ; then
+	echo "Usage: espressou patch <phase number> <directory to patch from>"
+	exit
+    fi
+    if [ -d Phase$2 ]; then
+	if [ -d $3 ]; then
+	    echo "Patching phase $2 with files from $3"
+	    case $2 in 
+		1 ) echo "Copying espresso.flex, espresso.cup"
+		    cp $3/src/Parser/espresso.cup Phase$2/src/Parser/.
+		    cp $3/src/Scanner/espresso.flex Phase$2/src/Scanner/.
+		    ;;
+		2 ) echo "Copying espresso.cup"
+		    cp $3/src/Parser/espresso.cup Phase$2/src/Parser/. 
+		    ;;
+		3 ) echo "Copying ClassAndMemberFinder.java, NameChecker.java"
+		    cp $3/src/NameChecker/ClassAndMemberFinder.java Phase$2/src/NameChecker/.
+		    cp $3/src/NameChecker/NameChecker.java Phase$2/src/NameChecker/. 
+		    ;;
+		4 ) echo "Copying TypeChecker.java"
+		    cp $3/src/TypeChecker/TypeChecker.java Phase$2/src/TypeChecker/. 
+		    ;;
+		5 ) echo "Copying ModifierChecker.java"
+		    cp $3/src/ModifierChecker/ModifierChecker.java Phase$2/src/ModifierChecker/. 
+		    ;;
+		6 ) echo "Copying CodeGenerator.java"
+		    cp $3/src/Codegenerator/GenerateCode.java Phase$2/src/Codegenerator/.
+		    ;;
+		* ) echo "Invalid Phase number"
+		    ;;
+	    esac
+	else
+	    echo "Invalid directory name"
+	    exit
+	fi
+    else
+	echo "Phase $2 not yet installed"
+    fi
+elif [ $1 == "isopen" ] ; then
+  if [ $HOSTNAME == "java.cs.unlv.edu" ] ; then
+    echo "Phase $2 is `cat /home/matt/CSC460/Espresso/.Phase$2`"
+  else
+    echo "Phase $2 is `ssh $USER@$SERVER cat /home/matt/CSC460/Espresso/.Phase$2`"
+  fi
+elif [ $1 == "tar" ] ; then
+    if ! [ $# -eq 2 ] ; then
+	echo "Usage: espressou tar <phase number>"
+	exit
+    fi
+    cd Phase$2
+    ant clean
+    tar cvf Espresso-Phase$2-$USER.tar Include/*.java Lib/*.class src id.txt espressoc build.xml
+    cd ..
+    echo "Please hand in the 'Espresso-Phase$2-$USER.tar' file located in the Phase$2 directory without renaming it."
+elif [ $1 == "help" ] ; then
+    echo "Usage:  espressou install <phase number>"
+    echo "        espressou install tests"
+    echo "        espressou patch <phase to patch> <dir to patch from>"
+    echo "        espressou tar <phase>"
+    echo "        espressou isopen <phase>"
+else
+    echo "What do you want me to do again? Be more specific if you want my help"
+    echo "Type ./espressou help"
+fi

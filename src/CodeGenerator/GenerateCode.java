@@ -656,16 +656,18 @@ class GenerateCode extends Visitor {
 		String methodName = "";
 		String signature = "";
 		
-		if (in.target() == null) {
-			if (!(in.targetMethod.getModifiers().isStatic())) {
-				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
-			}
-		}else{
+		Sequence s = in.targetMethod.modifiers();
+
+		if (in.target() != null) {
 			in.target().visit(this);
 			if (in.targetMethod.getModifiers().isStatic()) {
 				if(!in.targetMethod.getname().equals("exit") && !in.targetMethod.getname().equals("System")){
 					classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
 				}
+			}
+		}else{
+			if (!(in.targetMethod.getModifiers().isStatic())) {
+				classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 			}
 		}
 
