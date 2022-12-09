@@ -122,21 +122,21 @@ class GenerateCode extends Visitor {
 			 -- If the left hand side is a local (non array): dup/dup2 
 		 */    
 		if (RHSofAssignment || isParameter) {
-			String dupInstString = "";
+			String OPstring = "";
 			if (as.left() instanceof FieldRef) {
 				FieldRef fr = (FieldRef)as.left();
 				if (!fr.myDecl.isStatic())  
-					dupInstString = "dup" + (fr.type.width() == 2 ? "2" : "") + "_x1";
+					OPstring = "dup" + (fr.type.width() == 2 ? "2" : "") + "_x1";
 				else 
-					dupInstString = "dup" + (fr.type.width() == 2 ? "2" : "");
+					OPstring = "dup" + (fr.type.width() == 2 ? "2" : "");
 			} else if (as.left() instanceof ArrayAccessExpr) {
 				ArrayAccessExpr ae = (ArrayAccessExpr)as.left();
-				dupInstString = "dup" + (ae.type.width() == 2 ? "2" : "") + "_x2";
+				OPstring = "dup" + (ae.type.width() == 2 ? "2" : "") + "_x2";
 			} else { // NameExpr
 				NameExpr ne = (NameExpr)as.left();
-				dupInstString = "dup" + (ne.type.width() == 2 ? "2" : "");
+				OPstring = "dup" + (ne.type.width() == 2 ? "2" : "");
 			}
-			classFile.addInstruction(new Instruction(Generator.getOpCodeFromString(dupInstString)));
+			classFile.addInstruction(new Instruction(Generator.getOpCodeFromString(OPstring)));
 		}
 
 		/* Store
@@ -307,9 +307,9 @@ class GenerateCode extends Visitor {
 		SwitchLabel sl = null;
 
 		// just to make sure we can do breaks;
-		boolean oldinsideSwitch = insideSwitch;
+		boolean tempinsideSwitch = insideSwitch;
 		insideSwitch = true;
-		String oldBreakLabel = Generator.getBreakLabel();
+		String tempBreakLabel = Generator.getBreakLabel();
 		Generator.setBreakLabel("L"+gen.getLabel());
 
 		if (ss.expr().type.isStringType()) {
@@ -355,8 +355,8 @@ class GenerateCode extends Visitor {
 		}
 		// Put the break label in;
 		classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, Generator.getBreakLabel()));
-		insideSwitch = oldinsideSwitch;
-		Generator.setBreakLabel(oldBreakLabel);
+		insideSwitch = tempinsideSwitch;
+		Generator.setBreakLabel(tempBreakLabel);
 		classFile.addComment(ss, "End SwitchStat");
 		return null;
 	}
@@ -517,11 +517,14 @@ class GenerateCode extends Visitor {
 
 		// YOUR CODE HERE
 		String elseLabel = "L";
+		String endLabel;
+
 		if (is.elsepart() != null) {
 			elseLabel += gen.getLabel();
 		}
-		String endLabel = "L"+gen.getLabel();
-		
+
+		endLabel = "L"+gen.getLabel();
+
 		is.expr().visit(this);
 
 		if (is.elsepart() == null) {
@@ -770,6 +773,8 @@ class GenerateCode extends Visitor {
 		classFile.addComment(ne, "New");
 
 		// YOUR CODE HERE
+		String signature;
+
 		classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_new, ne.type().typeName()));
 		classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
 		
@@ -780,7 +785,6 @@ class GenerateCode extends Visitor {
 			}
 		}
 
-		String signature;
 		if (ne.getConstructorDecl() == null) {
 			signature = "()V";
 			
@@ -913,9 +917,9 @@ class GenerateCode extends Visitor {
 			if (fd.isStatic()) {
 				fr.target().visit(this);
 				
-				if (!(fd.isClassType())) {
-					//classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
-				}
+				//if (!(fd.isClassType())) {
+				//	classFile.addInstruction(new Instruction(RuntimeConstants.opc_pop));
+				//}
 				
 				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, fr.targetType.typeName(), fr.fieldName().getname(), fr.type.signature())); //these parameters correct?
 				
@@ -1151,8 +1155,8 @@ class GenerateCode extends Visitor {
 		}
 		else if (up.op().operator().equals("-")) {
 			up.expr().visit(this);
-			String instString = up.expr().type.getTypePrefix() + "neg";
-			classFile.addInstruction(new Instruction(Generator.getOpCodeFromString(instString)));
+			String OPstring = up.expr().type.getTypePrefix() + "neg";
+			classFile.addInstruction(new Instruction(Generator.getOpCodeFromString(OPstring)));
 		}
 
 
@@ -1251,7 +1255,8 @@ class GenerateCode extends Visitor {
 		}
 		else if (op.equals("==") || op.equals("!=") || op.equals("<=") || op.equals(">=") || op.equals(">") || op.equals("<")) {
 
-			String truelabel, donelabel;
+			String truelabel;
+			String donelabel;
 			truelabel = gen.getLabel();
 			donelabel = gen.getLabel();
 			if (be.left().type.isClassType()) {
@@ -1276,20 +1281,20 @@ class GenerateCode extends Visitor {
 				gen.dataConvert(be.left().type, ct);
 				be.right().visit(this);
 				gen.dataConvert(be.right().type, ct);
-				String jumpTarget = "L" + truelabel;
+				String target = "L" + truelabel;
 				if (ct.isIntegerType()) {
 					if (op.equals("==")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpeq, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpeq, target));
 					} else if (op.equals("!=")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpne, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpne, target));
 					} else if (op.equals("<=")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmple, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmple, target));
 					} else if (op.equals(">=")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpge, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpge, target));
 					} else if (op.equals("<")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmplt, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmplt, target));
 					} else if (op.equals(">")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpgt, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_if_icmpgt, target));
 					}
 				} else if (ct.isLongType() || ct.isFloatType() || ct.isDoubleType()) {
 					if (ct.isLongType())
@@ -1298,19 +1303,19 @@ class GenerateCode extends Visitor {
 						classFile.addInstruction(new Instruction(RuntimeConstants.opc_fcmpg));
 					else
 						classFile.addInstruction(new Instruction(RuntimeConstants.opc_dcmpg));
-					jumpTarget = "L" + truelabel;
+					target = "L" + truelabel;
 					if (op.equals("==")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, target));
 					} else if (op.equals("!=")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifne, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifne, target));
 					} else if (op.equals("<=")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifle, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifle, target));
 					} else if (op.equals(">=")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifge, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifge, target));
 					} else if (op.equals("<")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_iflt, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_iflt, target));
 					} else if (op.equals(">")) {
-						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifgt, jumpTarget));
+						classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifgt, target));
 					}
 				} else
 					Error.error("no case found for type: " + ct);
@@ -1401,7 +1406,7 @@ class GenerateCode extends Visitor {
     public Object visitCastExpr(CastExpr ce) {
 		println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
 		classFile.addComment(ce, "Cast Expression");
-		String instString;
+		String OPstring;
 		
 		// YOUR CODE HERE
 		ce.expr().visit(this);
